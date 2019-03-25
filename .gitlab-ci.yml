@@ -18,21 +18,19 @@ build-linux:
   script: 
   - apt install -y make gcc
   - make -j4
-  - mv bin/ProjetS6-MarcNGUYEN-ThomasLARDIER ./
   artifacts:
     paths:
-      - ProjetS6-MarcNGUYEN-ThomasLARDIER
+      - bin
     expire_in: 1 week
 
 build-windows:
   stage: build
   script: 
   - apt install -y make gcc-mingw-w64-x86-64
-  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=ProjetS6-MarcNGUYEN-ThomasLARDIER.exe
-  - mv bin/ProjetS6-MarcNGUYEN-ThomasLARDIER.exe ./
+  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=ProjetS6-MarcNGUYEN-ThomasLARDY.exe
   artifacts:
     paths:
-      - ProjetS6-MarcNGUYEN-ThomasLARDIER.exe
+      - bin
     expire_in: 1 week
 
 pages:
