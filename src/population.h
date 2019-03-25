@@ -14,7 +14,8 @@ struct Population
     long length;
 };
 
-struct Population* creer_population(const long length);
+struct Population* creerPopulation(const long length);
+struct Population* clonerPopulation(struct Population* population_source);
 
 #endif // POPULATION_H
 
