@@ -1,12 +1,16 @@
 /**
  * @file population.c
- * @author your name (you@domain.com)
- * @brief Manipuler une population.
- * @version 0.1
- * @date 2019-03-25
- * 
- * @copyright Copyright (c) 2019
- * 
+ *
+ * @brief Manipulateur de population.
+ *
+ * Fonctionnalités :
+ * - Créer
+ * - Cloner
+ * - Obtenir des métriques
+ *
+ * @author Marc NGUYEN
+ * @author Thomas LARDY
+ * @date 26 Mar 2019
  */
 
 #include <stdio.h>
@@ -65,7 +69,7 @@ struct Population *clonerPopulation(struct Population *population_source)
 }
 
 /**
- * @brief .
+ * @brief Obtenir des métriques intéressantes sur la population.
  * 
  * @param population Population contenant la tailler et la grille.
  * @return struct Statistique Structure contenant le nombre de struct State.
