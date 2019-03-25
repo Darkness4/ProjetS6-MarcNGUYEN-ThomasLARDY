@@ -1,0 +1,49 @@
+image: ubuntu:18.04
+
+before_script:
+  - apt update
+  - apt -y full-upgrade
+
+test:
+  script:
+  - apt update
+  - apt install -y doxygen graphviz
+  - cd docs
+  - doxygen Doxyfile
+  except:
+  - master
+
+build-linux:
+  stage: build
+  script: 
+  - apt install -y make gcc
+  - make -j4
+  - mv bin/ProjetS6-MarcNGUYEN-ThomasLARDIER ./
+  artifacts:
+    paths:
+      - ProjetS6-MarcNGUYEN-ThomasLARDIER
+    expire_in: 1 week
+
+build-windows:
+  stage: build
+  script: 
+  - apt install -y make gcc-mingw-w64-x86-64
+  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=ProjetS6-MarcNGUYEN-ThomasLARDIER.exe
+  - mv bin/ProjetS6-MarcNGUYEN-ThomasLARDIER.exe ./
+  artifacts:
+    paths:
+      - ProjetS6-MarcNGUYEN-ThomasLARDIER.exe
+    expire_in: 1 week
+
+pages:
+  script: 
+  - apt update
+  - apt install -y doxygen graphviz
+  - cd docs
+  - doxygen Doxyfile
+  - mv webdoc/html/ ../public/
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
