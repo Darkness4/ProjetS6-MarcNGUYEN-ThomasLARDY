@@ -12,10 +12,10 @@
  */
 int main(int argc, char const *argv[])
 {
-  long length = 10;
-  if (argc > 1) sscanf(argv[1], "%li", &length);
+  long cote = 10;
+  if (argc > 1) sscanf(argv[1], "%li", &cote);
 
-  struct Population* population = creerPopulation(length);
+  struct Population* population = creerPopulation(cote);
 
   return 0;
 }

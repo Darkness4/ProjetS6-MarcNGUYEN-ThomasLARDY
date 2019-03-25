@@ -1,7 +1,13 @@
 #if !defined(POPULATION_H)
 #define POPULATION_H
 
-enum State{SAIN, MALADE, MORT, IMMUNISE};
+enum State
+{
+    SAIN,
+    MALADE,
+    MORT,
+    IMMUNISE
+};
 
 struct Personne
 {
@@ -10,12 +16,11 @@ struct Personne
 
 struct Population
 {
-    struct Personne** grille_de_personnes;
-    long length;
+    struct Personne ***grille_de_personnes;
+    long cote;
 };
 
-struct Population* creerPopulation(const long length);
-struct Population* clonerPopulation(struct Population* population_source);
+struct Population *creerPopulation(const long cote);
+struct Population *clonerPopulation(struct Population *population_source);
 
 #endif // POPULATION_H
-
