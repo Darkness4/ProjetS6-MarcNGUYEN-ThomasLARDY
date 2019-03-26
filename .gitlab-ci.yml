@@ -20,7 +20,7 @@ unit-tests:
   script:
   - apt install -y make gcc
   - cd tests
-  - ./unit_tests.sh
+  - sh unit_tests.sh
 
 build-linux:
   stage: build
