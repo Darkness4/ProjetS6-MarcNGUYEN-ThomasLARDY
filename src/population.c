@@ -21,6 +21,18 @@
 /**
  * @brief Créer une population dans une grille cote*cote.
  * 
+ * Usage:
+ * @code
+ * // Init
+ * struct Population *population = creerPopulation(3);
+ *
+ * // Traitement
+ * //...
+ *
+ * // Fin
+ * free(population)
+ * @endcode
+ * 
  * @param cote Longueur de la
  * @return struct Personne** 
  */
@@ -45,6 +57,20 @@ struct Population *creerPopulation(const unsigned long cote)
 
 /**
  * @brief Clone une population.
+ * 
+ * Usage:
+ * @code
+ * // Init
+ * struct Population *population1 = creerPopulation(3);
+ * struct Population *population2 = clonerPopulation(population1);
+ * 
+ * // Traitement
+ * // ...
+ * 
+ * // Fin
+ * free(population1)
+ * free(population2)
+ * @endcode
  * 
  * @param population_source Population source.
  * @return struct Population* Population destination.
@@ -71,15 +97,24 @@ struct Population *clonerPopulation(struct Population *population_source)
 /**
  * @brief Obtenir des métriques intéressantes sur la population.
  * 
+ * Usage:
+ * @code
+ * struct Statistique stats = getStatistique(population);
+ * printf("%lu\n", stats.nb_IMMUNISE);
+ * printf("%lu\n", stats.nb_SAIN);
+ * printf("%lu\n", stats.nb_MALADE);
+ * printf("%lu\n", stats.nb_MORT);
+ * @endcode
+ * 
  * @param population Population contenant la tailler et la grille.
  * @return struct Statistique Structure contenant le nombre de struct State.
  */
 struct Statistique getStatistique(struct Population *population)
 {
     struct Statistique statistique = {population->cote * population->cote, 0, 0, 0, 0};
-    for (int i = 0; i < population->cote; i++)
+    for (long unsigned i = 0; i < population->cote; i++)
     {
-        for (int j = 0; j < population->cote; j++)
+        for (long unsigned j = 0; j < population->cote; j++)
         {
             switch (population->grille_de_personnes[i][j]->state)
             {
@@ -90,7 +125,7 @@ struct Statistique getStatistique(struct Population *population)
                 statistique.nb_SAIN++;
                 break;
             case MALADE:
-                statistique.nb_IMMUNISE++;
+                statistique.nb_MALADE++;
                 break;
             case MORT:
                 statistique.nb_MORT++;
