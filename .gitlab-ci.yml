@@ -1,17 +1,26 @@
-image: ubuntu:18.04
+image: ubuntu:latest
+
+stages:
+  - pages
+  - build
+  - test
 
 before_script:
   - apt update
-  - apt -y full-upgrade
 
-test:
+test-docs:
+  stage: test
   script:
-  - apt update
   - apt install -y doxygen graphviz
   - cd docs
   - doxygen Doxyfile
-  except:
-  - master
+
+unit-tests:
+  stage: test
+  script:
+  - apt install -y make gcc
+  - cd tests
+  - ./unit_tests.sh
 
 build-linux:
   stage: build
@@ -34,8 +43,8 @@ build-windows:
     expire_in: 1 week
 
 pages:
+  stage: pages
   script: 
-  - apt update
   - apt install -y doxygen graphviz
   - cd docs
   - doxygen Doxyfile
