@@ -12,7 +12,6 @@ test-docs:
   stage: test
   script:
   - apt install -y doxygen graphviz
-  - cd docs
   - doxygen Doxyfile
 
 unit-tests:
@@ -46,9 +45,8 @@ pages:
   stage: pages
   script: 
   - apt install -y doxygen graphviz
-  - cd docs
   - doxygen Doxyfile
-  - mv webdoc/html/ ../public/
+  - mv webdoc/html/ public/
   artifacts:
     paths:
     - public
