@@ -59,6 +59,5 @@ unit-tests-windows:
   script:
   - apt install -y make gcc-mingw-w64-x86-64
   - cd tests
-  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc
-  - ./bin/*
+  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc  # TODO: run on linux, windows bin
 
