@@ -8,18 +8,17 @@ stages:
 before_script:
   - apt update
 
-test-docs:
-  stage: test
-  script:
+pages:
+  stage: pages
+  script: 
   - apt install -y doxygen graphviz
   - doxygen Doxyfile
-
-unit-tests:
-  stage: test
-  script:
-  - apt install -y make gcc
-  - cd tests
-  - sh unit_tests.sh
+  - mv webdoc/html/ public/
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
 
 build-linux:
   stage: build
@@ -41,14 +40,24 @@ build-windows:
       - bin
     expire_in: 1 week
 
-pages:
-  stage: pages
-  script: 
+test-docs:
+  stage: test
+  script:
   - apt install -y doxygen graphviz
   - doxygen Doxyfile
-  - mv webdoc/html/ public/
-  artifacts:
-    paths:
-    - public
-  only:
-  - master
+
+unit-tests-linux:
+  stage: test
+  script:
+  - apt install -y make gcc
+  - cd tests
+  - make -j4
+  - ./bin/*
+
+unit-tests-windows:
+  stage: test
+  script:
+  - apt install -y make gcc-mingw-w64-x86-64
+  - cd tests
+  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc  # TODO: run on linux, windows bin
+
