@@ -6,7 +6,6 @@
  * Fonctionnalités :
  * - Créer
  * - Cloner
- * - Obtenir des métriques
  *
  * @author Marc NGUYEN
  * @author Thomas LARDY
@@ -92,46 +91,4 @@ struct Population *clonerPopulation(struct Population *population_source)
     population->grille_de_personnes = grille_de_personnes;
     population->cote = population_source->cote;
     return population;
-}
-
-/**
- * @brief Obtenir des métriques intéressantes sur la population.
- * 
- * Usage:
- * @code
- * struct Statistique stats = getStatistique(population);
- * printf("%lu\n", stats.nb_IMMUNISE);
- * printf("%lu\n", stats.nb_SAIN);
- * printf("%lu\n", stats.nb_MALADE);
- * printf("%lu\n", stats.nb_MORT);
- * @endcode
- * 
- * @param population Population contenant la tailler et la grille.
- * @return struct Statistique Structure contenant le nombre de struct State.
- */
-struct Statistique getStatistique(struct Population *population)
-{
-    struct Statistique statistique = {population->cote * population->cote, 0, 0, 0, 0};
-    for (long unsigned i = 0; i < population->cote; i++)
-    {
-        for (long unsigned j = 0; j < population->cote; j++)
-        {
-            switch (population->grille_de_personnes[i][j]->state)
-            {
-            case IMMUNISE:
-                statistique.nb_IMMUNISE++;
-                break;
-            case SAIN:
-                statistique.nb_SAIN++;
-                break;
-            case MALADE:
-                statistique.nb_MALADE++;
-                break;
-            case MORT:
-                statistique.nb_MORT++;
-                break;
-            }
-        }
-    }
-    return statistique;
 }

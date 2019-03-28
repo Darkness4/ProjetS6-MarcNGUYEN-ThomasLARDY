@@ -57,15 +57,5 @@ int main(void)
     }
     printf("    State Personne Clone == State Personne Source: \x1B[32mOK\x1B[0m\n");
 
-    printf("  getStatistiques:\n");
-    struct Statistique stats = getStatistique(population);
-    assert(stats.nb_IMMUNISE == 0);
-    printf("    nb_IMMUNISE: \x1B[32mOK\x1B[0m\n");
-    assert(stats.nb_MORT == 0);
-    printf("    nb_MORT: \x1B[32mOK\x1B[0m\n");
-    assert(stats.nb_MALADE == 0);
-    printf("    nb_MALADE: \x1B[32mOK\x1B[0m\n");
-    assert(stats.nb_SAIN == 49);
-    printf("    nb_SAIN: \x1B[32mOK\x1B[0m\n");
     return 0;
 }

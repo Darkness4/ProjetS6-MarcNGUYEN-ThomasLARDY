@@ -52,7 +52,7 @@ unit-tests-linux:
   - apt install -y make gcc
   - cd tests
   - make -j4
-  - ./bin/*
+  - for file in bin/*; do $file; done
 
 unit-tests-windows:
   stage: test
