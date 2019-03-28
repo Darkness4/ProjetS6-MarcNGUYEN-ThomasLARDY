@@ -13,33 +13,6 @@ enum State
 };
 
 /**
- * @brief Structure contenant les chiffres intéressants.
- */
-struct Statistique
-{
-    /**
-     * @brief Population totale, égale à cote*cote.
-     */
-    unsigned long population_totale;
-    /**
-     * @brief Nombre de Personne IMMUNISE.
-     */
-    unsigned long nb_IMMUNISE;
-    /**
-     * @brief Nombre de Personne SAIN.
-     */
-    unsigned long nb_SAIN;
-    /**
-     * @brief Nombre de Personne MORT.
-     */
-    unsigned long nb_MORT;
-    /**
-     * @brief Nombre de Personne MALADE.
-     */
-    unsigned long nb_MALADE;
-};
-
-/**
  * @brief Structure Personne, contenant les propriétés de celle-ci.
  */
 struct Personne
@@ -67,6 +40,5 @@ struct Population
 
 struct Population *creerPopulation(const unsigned long cote);
 struct Population *clonerPopulation(struct Population *population_source);
-struct Statistique getStatistique(struct Population *population);
 
 #endif // POPULATION_H

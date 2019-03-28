@@ -25,12 +25,17 @@ OBJECTS_TEST := $(SOURCES_TEST:$(TESTDIR)/%.c=$(OBJDIR)/%.o)
 rm = rm -rf
 
 # Make all
-all: $(BINDIR)/population_tests
+all: $(BINDIR)/population_test $(BINDIR)/statistique_test
 
 # Link
-$(BINDIR)/population_tests: $(OBJDIR)/population_test.o $(SRCDIR)/population.o
+$(BINDIR)/population_test: $(OBJDIR)/population_test.o $(OBJDIR)/population.o
 	@mkdir -p $(BINDIR)
-	$(LINKER) $(OBJDIR)/population_test.o $(SRCDIR)/population.o $(LFLAGS) -o $@
+	$(LINKER) $^ $(LFLAGS) -o $@
+	@echo "Linking complete!"
+
+$(BINDIR)/statistique_test: $(OBJDIR)/statistique_test.o $(OBJDIR)/population.o $(OBJDIR)/statistique.o
+	@mkdir -p $(BINDIR)
+	$(LINKER) $^ $(LFLAGS) -o $@
 	@echo "Linking complete!"
 
 # Compile
@@ -66,5 +71,5 @@ clean:
 
 .PHONY: remove
 remove: clean
-	@$(rm) $(BINDIR)/$(TARGET)
+	@$(rm) $(BINDIR)/population_test* $(BINDIR)/statistique_test*
 	@echo "Executable removed!"
