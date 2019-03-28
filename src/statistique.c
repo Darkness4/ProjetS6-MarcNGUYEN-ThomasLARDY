@@ -64,7 +64,8 @@ void appendData(struct Data *data, struct Statistique stats)
 {
     // Nouvelle allocation de mémoire
     struct Statistique **nouvelle_liste_statistiques = (struct Statistique **)malloc(sizeof(struct Statistique *) * data->tours + 1);
-    for(unsigned long i = 0; i < data->tours; i++) {
+    for (unsigned long i = 0; i < data->tours; i++)
+    {
         nouvelle_liste_statistiques[i] = data->liste_statistiques[i];
     }
 
@@ -107,7 +108,6 @@ void exporter(struct Data *data, const char *fichier_data)
 
     fclose(file);
 }
-
 
 /**
  * @brief Dérive tel que x(t+1)-x(t)
@@ -186,7 +186,6 @@ unsigned long getTaillePopulation(struct Population *population)
     return population->cote * population->cote;
 }
 
-
 /**
  * @brief Exporte un graph style ASCII dans un fichier fichier_data.
  * 
@@ -197,66 +196,90 @@ unsigned long getTaillePopulation(struct Population *population)
  * 
  * @param data Base de données.
  * @param fichier_data Nom du fichier à écrire.
+ * @param hauteur Hauteur du graphique
+ * @param limite Limite en tour du graphique (permet de compresser le graphique)
+ * @return char** Graphique[ligne][charactère]
  */
-void graphique(struct Data *data, const char *fichier_data, unsigned long hauteur)
+char** graphique(struct Data *data, const char *fichier_data, unsigned long hauteur, unsigned long limite)
 {
-    FILE *file = fopen(fichier_data, "w");
+    FILE *file; 
+
+    char **graphique = (char **)malloc(sizeof(char *) * hauteur);
+    for (unsigned long i = 0; i < hauteur; i++)
+    {
+        graphique[i] = (char *)malloc(sizeof(char) * limite);
+        for (unsigned long j = 0; j < limite; j++)
+        {
+            graphique[i][j] = ' ';
+        }
+    }
+    unsigned long pop_tot = data->population_totale;
+    unsigned long ratio_tour = data->tours / limite;
+    if (ratio_tour == 0)
+        ratio_tour = 1;
+    struct Statistique **stats = data->liste_statistiques;
+
+    for (unsigned long tour = 0; tour < data->tours - ratio_tour + 1; tour += ratio_tour)
+    {
+        unsigned long ratio_nb_IMMUNISE_norm = 0;
+        unsigned long ratio_nb_MORT_norm = 0;
+        unsigned long ratio_nb_SAIN_norm = 0;
+        unsigned long ratio_nb_MALADE_norm = 0;
+        for (unsigned long i = 0; i < ratio_tour; i++)
+        {
+            ratio_nb_IMMUNISE_norm += stats[tour + i]->nb_IMMUNISE;
+            ratio_nb_MORT_norm += stats[tour + i]->nb_MORT;
+            ratio_nb_SAIN_norm += stats[tour + i]->nb_SAIN;
+            ratio_nb_MALADE_norm += stats[tour + i]->nb_MALADE;
+        }
+
+        // Ratio normalizé (quand positif, conversion float vers int = floor)
+        ratio_nb_IMMUNISE_norm = ratio_nb_IMMUNISE_norm * hauteur / ratio_tour / pop_tot;
+        ratio_nb_MORT_norm = ratio_nb_MORT_norm * hauteur / ratio_tour / pop_tot;
+        ratio_nb_SAIN_norm = ratio_nb_SAIN_norm * hauteur / ratio_tour / pop_tot;
+        ratio_nb_MALADE_norm = ratio_nb_MALADE_norm * hauteur / ratio_tour / pop_tot;
+
+        // Print
+        unsigned long curseur = 0;
+        for (unsigned long i = 0; i < ratio_nb_IMMUNISE_norm; i++)
+        {
+            graphique[curseur][tour / ratio_tour] = '*';
+            curseur++;
+        }
+        for (unsigned long i = 0; i < ratio_nb_SAIN_norm; i++)
+        {
+            graphique[curseur][tour / ratio_tour] = '+';
+            curseur++;
+        }
+        for (unsigned long i = 0; i < ratio_nb_MALADE_norm; i++)
+        {
+            graphique[curseur][tour / ratio_tour] = 'o';
+            curseur++;
+        }
+        for (unsigned long i = 0; i < ratio_nb_MORT_norm; i++)
+            curseur++;
+        if (curseur >= hauteur)
+            printf("Attention, le curseur aurait du provoquer une erreur de segmentation !\n"
+                   "Le graph n'est pas precis !\n");
+    }
+
+    // Ecrire sur le fichier
+    file = fopen(fichier_data, "w");
     if (!file)
     {
         printf("Erreur: Le fichier n'a pas pu être ouvert.\n");
         exit(1);
     }
-
-    char **graphique = (char**)malloc(sizeof(char*)*hauteur);
-    for (unsigned long i = 0; i < hauteur; i++) {
-        graphique[i] = (char*)malloc(sizeof(char)*data->tours);
-        for (unsigned long j = 0; j < data->tours; j++) {
-            graphique[i][j] = ' ';
+    for (unsigned long i = 0; i < hauteur; i++)
+    {
+        for (unsigned long j = 0; j < limite; j++)
+        {
+            fprintf(file, "%c", graphique[i][j]);
         }
-    }
-    double ratio_nb_IMMUNISE;
-    double ratio_nb_MORT;
-    double ratio_nb_SAIN;
-    double ratio_nb_MALADE;
-    unsigned long pop_tot = data->population_totale;
-    struct Statistique** stats = data->liste_statistiques;
-
-    for (unsigned long tour = 0; tour < data->tours; tour++) {
-        // Ratio
-        ratio_nb_IMMUNISE = (double)stats[tour]->nb_IMMUNISE/pop_tot;
-        ratio_nb_MORT = (double)stats[tour]->nb_MORT/pop_tot;
-        ratio_nb_SAIN = (double)stats[tour]->nb_SAIN/pop_tot;
-        ratio_nb_MALADE = (double)stats[tour]->nb_MALADE/pop_tot;
-
-        // Ratio normalizé (cast quand positif = floor)
-        unsigned long ratio_nb_IMMUNISE_norm = (unsigned long)(ratio_nb_IMMUNISE*hauteur);
-        unsigned long ratio_nb_MORT_norm = (unsigned long)(ratio_nb_MORT*hauteur);
-        unsigned long ratio_nb_SAIN_norm = (unsigned long)(ratio_nb_SAIN*hauteur);
-        unsigned long ratio_nb_MALADE_norm = (unsigned long)(ratio_nb_MALADE*hauteur);
-
-        // Print
-        unsigned long curseur = 0;
-        for(unsigned long i = 0; i < ratio_nb_IMMUNISE_norm; i++) {
-            graphique[curseur][tour] = '*';
-            curseur++;
-        }
-        for(unsigned long i = 0; i < ratio_nb_SAIN_norm; i++) {
-            graphique[curseur][tour] = '+';
-            curseur++;
-        }
-        for(unsigned long i = 0; i < ratio_nb_MALADE_norm; i++) {
-            graphique[curseur][tour] = 'o';
-            curseur++;
-        }
-        for(unsigned long i = 0; i < ratio_nb_MORT_norm; i++) curseur++;
-        if (curseur >= hauteur) printf("Attention, le curseur aurait du provoquer une erreur de segmentation !\n"
-                                       "Le graph n'est pas precis !\n");
-    }
-
-    // Ecrire sur le fichier
-    for(unsigned long i = 0; i < hauteur; i++) {
-        fprintf(file, "%s\n", graphique[i]);
+        fprintf(file, "\n");
     }
 
     fclose(file);
+
+    return graphique;
 }

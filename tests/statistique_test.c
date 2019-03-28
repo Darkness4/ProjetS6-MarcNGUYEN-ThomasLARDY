@@ -89,8 +89,12 @@ int main(void)
     appendData(data, stats);
     appendData(data, stats);
     appendData(data, stats);
-    graphique(data, "graphique.txt", 100);
+    graphique(data, "graphique.txt", data->population_totale, data->tours);
     printf("    Graphique: \x1B[33mVOIR MANUELLEMENT\x1B[0m\n");
+    graphique(data, "graphique_div2.txt", 100, data->tours/2);
+    printf("    Graphique div2: \x1B[33mVOIR MANUELLEMENT\x1B[0m\n");
+    graphique(data, "graphique_90.txt", 100, 90);
+    printf("    Graphique 90: \x1B[33mVOIR MANUELLEMENT\x1B[0m\n");
     return 0;
 }
 
