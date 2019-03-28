@@ -58,6 +58,6 @@ void appendData(struct Data *data, struct Statistique stats);
 void exporter(struct Data *data, const char *fichier_data);
 unsigned long getTaillePopulation(struct Population *population);
 struct Data *deriver(struct Data *data);
-void graphique(struct Data *data, const char *fichier_data, unsigned long hauteur);
+char** graphique(struct Data *data, const char *fichier_data, unsigned long hauteur, unsigned long limite);
 
 #endif // STATISTIQUE_H
