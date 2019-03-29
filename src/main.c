@@ -49,6 +49,7 @@ int main(int argc, char const* argv[]) {
   double lambda = 1.0;  // SAIN -> MALADE
   char* file_graph = "graphique.txt";
   char* file_data = "data.txt";
+  char* file_tableau = "tableau de bord.txt";
   unsigned long tour_max = 500;
 
   // Constructeur
@@ -70,13 +71,16 @@ int main(int argc, char const* argv[]) {
       sscanf(argv[i + 1], "%lu", &limite);
     if (!strcmp(argv[i], "-fg") || !strcmp(argv[i], "--graph") ||
         !strcmp(argv[i], "-og"))
-      file_graph = argv[i + 1];
+      strcpy(file_graph, argv[i + 1]);
     if (!strcmp(argv[i], "-fd") || !strcmp(argv[i], "--data") ||
         !strcmp(argv[i], "-o") || !strcmp(argv[i], "-od"))
-      file_data = argv[i + 1];
+      strcpy(file_data, argv[i + 1]);
     if (!strcmp(argv[i], "-t") || !strcmp(argv[i], "--tours") ||
         !strcmp(argv[i], "--tour"))
       sscanf(argv[i + 1], "%lu", &tour_max);
+    if (!strcmp(argv[i], "-ft") || !strcmp(argv[i], "--tableau") ||
+        !strcmp(argv[i], "-ot"))
+      strcpy(file_tableau, argv[i + 1]);
   }
 
   // Init
@@ -104,6 +108,7 @@ int main(int argc, char const* argv[]) {
     for (unsigned long j = 0; j < limite; j++) printf("%c", graph[i][j]);
     printf("\n");
   }
+  tableau(data, file_tableau);
 
   return 0;
 }

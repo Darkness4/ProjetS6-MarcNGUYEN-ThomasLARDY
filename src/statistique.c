@@ -270,3 +270,73 @@ char **graphique(struct Data *data, const char *fichier_data,
 
   return graphique;
 }
+
+void tableau(struct Data *data, const char *fichier_tableau) {
+  struct Data *data_derivee = deriver(data);
+  long vit_MALADE_max = 0;
+  long vit_IMMUNISE_max = 0;
+  long vit_MORT_max = 0;
+  for (unsigned long i = 0; i < data_derivee->tours; i++) {
+    if (vit_IMMUNISE_max < data_derivee->liste_statistiques[i]->nb_IMMUNISE)
+      vit_IMMUNISE_max = data_derivee->liste_statistiques[i]->nb_IMMUNISE;
+    if (vit_MORT_max < data_derivee->liste_statistiques[i]->nb_MORT)
+      vit_MORT_max = data_derivee->liste_statistiques[i]->nb_MORT;
+    if (vit_MALADE_max < data_derivee->liste_statistiques[i]->nb_MALADE)
+      vit_MALADE_max = data_derivee->liste_statistiques[i]->nb_MALADE;
+  }
+
+  printf("----------------------------------------------------------------\n");
+  printf("| Tours | Nb SAIN fin | Nb MORT fin | Nb IMMUNISE fin | Total  |\n");
+  printf("| ----- | ----------- | ----------- | --------------- | ------ |\n");
+  printf("| %5lu | %11li | %11li | %15li | %6lu |\n", data->tours,
+         data->liste_statistiques[data->tours - 1]->nb_SAIN,
+         data->liste_statistiques[data->tours - 1]->nb_MORT,
+         data->liste_statistiques[data->tours - 1]->nb_IMMUNISE,
+         data->population_totale);
+  printf(
+      "|       |    %6.3lf %% |    %6.3lf %% |        %6.3lf %% |  100 %% |\n",
+      (double)data->liste_statistiques[data->tours - 1]->nb_SAIN * 100 /
+          data->population_totale,
+      (double)data->liste_statistiques[data->tours - 1]->nb_MORT * 100 /
+          data->population_totale,
+      (double)data->liste_statistiques[data->tours - 1]->nb_IMMUNISE * 100 /
+          data->population_totale);
+  printf("|--------------------------------------------------------------|\n");
+  printf("| Vitesse IMMUNISE max | Vitesse MALADE max | Vitesse MORT max |\n");
+  printf("| -------------------- | ------------------ | ---------------- |\n");
+  printf("| %20li | %18li | %16li |\n", vit_IMMUNISE_max, vit_MALADE_max,
+         vit_MORT_max);
+  printf("----------------------------------------------------------------\n");
+
+  FILE *file = fopen(fichier_tableau, "w");
+  fprintf(file,
+          "----------------------------------------------------------------\n");
+  fprintf(file,
+          "| Tours | Nb SAIN fin | Nb MORT fin | Nb IMMUNISE fin | Total  |\n");
+  fprintf(file,
+          "| ----- | ----------- | ----------- | --------------- | ------ |\n");
+  fprintf(file, "| %5lu | %11li | %11li | %15li | %6lu |\n", data->tours,
+          data->liste_statistiques[data->tours - 1]->nb_SAIN,
+          data->liste_statistiques[data->tours - 1]->nb_MORT,
+          data->liste_statistiques[data->tours - 1]->nb_IMMUNISE,
+          data->population_totale);
+  fprintf(
+      file,
+      "|       |     %3.3lf %% |    %3.3lf %% |        %3.3lf %% |  100 %% |\n",
+      (double)data->liste_statistiques[data->tours - 1]->nb_SAIN * 100 /
+          data->population_totale,
+      (double)data->liste_statistiques[data->tours - 1]->nb_MORT * 100 /
+          data->population_totale,
+      (double)data->liste_statistiques[data->tours - 1]->nb_IMMUNISE * 100 /
+          data->population_totale);
+  fprintf(file,
+          "|--------------------------------------------------------------|\n");
+  fprintf(file,
+          "| Vitesse IMMUNISE max | Vitesse MALADE max | Vitesse MORT max |\n");
+  fprintf(file,
+          "| -------------------- | ------------------ | ---------------- |\n");
+  fprintf(file, "| %20li | %18li | %16li |\n", vit_IMMUNISE_max, vit_MALADE_max,
+          vit_MORT_max);
+  fprintf(file,
+          "----------------------------------------------------------------\n");
+}
