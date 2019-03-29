@@ -16,7 +16,7 @@
  * struct Population* population = creerPopulation(7);  // TODO add function
  * infecter. for(int i = 0; (i<tour_max)&&(!est_fini); i++) {
  *     jouerTour(population);
- *     est_fini = presenceZombie(population);
+ *     est_fini = zombiePresent(population);
  * }
  * @endcode
  *
@@ -38,13 +38,13 @@
  * Usage:
  * @code
  * struct Population* population = creerPopulation(7);
- * char boolean = presenceZombie(population);  // -> false;
+ * char boolean = zombiePresent(population);  // -> false;
  * @endcode
  *
  * @param population Grille représentant la population.
  * @return char Booléen, si zombies toujours présents.
  */
-char presenceZombie(struct Population *population) {
+char zombiePresent(struct Population *population) {
   unsigned long cote = population->cote;
   for (unsigned long i = 0; i < cote; i++) {
     for (unsigned long j = 0; j < cote; j++) {
@@ -65,7 +65,7 @@ char presenceZombie(struct Population *population) {
  * struct Population* population = creerPopulation(7);  // TODO add function
  * infecter. for(int i = 0; (i<tour_max)&&(!est_fini); i++) {
  *     jouerTour(population);
- *     est_fini = presenceZombie(population);
+ *     est_fini = zombiePresent(population);
  * }
  * @endcode
  *

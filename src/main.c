@@ -90,7 +90,7 @@ int main(int argc, char const* argv[]) {
   // Traitement
   population->grille_de_personnes[0][0]->state = MALADE;
   afficherGrillePopulation(population);
-  for (unsigned long i = 0; i < tour_max; i++) {
+  for (unsigned long i = 0; i < tour_max && zombiePresent(population); i++) {
     jouerTour(population, beta, gamma, lambda);
     stats = getStatistique(population);
     afficherGrillePopulation(population);

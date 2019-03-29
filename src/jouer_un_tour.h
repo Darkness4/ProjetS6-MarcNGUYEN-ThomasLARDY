@@ -3,7 +3,7 @@
 
 #include "population.h"
 
-char presenceZombie(struct Population *population);
+char zombiePresent(struct Population *population);
 void jouerTour(struct Population *population, double beta, double gamma,
                double lambda);
 
