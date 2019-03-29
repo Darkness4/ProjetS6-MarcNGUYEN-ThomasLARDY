@@ -4,6 +4,7 @@
 #include "population.h"
 
 char presenceZombie(struct Population *population);
-void jouerTour(struct Population *population, double beta, double gamma, double lambda);
+void jouerTour(struct Population *population, double beta, double gamma,
+               double lambda);
 
-#endif // JOUER_UN_TOUR_H
+#endif  // JOUER_UN_TOUR_H
