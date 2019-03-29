@@ -58,5 +58,6 @@ unsigned long getTaillePopulation(struct Population *population);
 struct Data *deriver(struct Data *data);
 char **graphique(struct Data *data, const char *fichier_data,
                  unsigned long hauteur, unsigned long limite);
+void tableau(struct Data *data, const char *fichier_tableau);
 
 #endif  // STATISTIQUE_H

@@ -9,6 +9,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "../src/statistique.h"
 
@@ -97,6 +98,8 @@ int main(void) {
   printf("    Graphique div2: \x1B[33mVOIR MANUELLEMENT\x1B[0m\n");
   graphique(data, "graphique_90.txt", 100, 90);
   printf("    Graphique 90: \x1B[33mVOIR MANUELLEMENT\x1B[0m\n");
+  tableau(data, "tableau.txt");
+  printf("    Tableau de bord: \x1B[33mVOIR MANUELLEMENT\x1B[0m\n");
   return 0;
 }
 
