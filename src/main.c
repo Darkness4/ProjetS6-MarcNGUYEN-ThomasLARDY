@@ -75,7 +75,7 @@ int main(int argc, char const* argv[]) {
         !strcmp(argv[i], "-o") || !strcmp(argv[i], "-od"))
       file_data = argv[i + 1];
     if (!strcmp(argv[i], "-t") || !strcmp(argv[i], "--tours") ||
-        !strcmp(argv[i], "--tour") || !strcmp(argv[i], "--ptest"))
+        !strcmp(argv[i], "--tour"))
       sscanf(argv[i + 1], "%lu", &tour_max);
   }
 
