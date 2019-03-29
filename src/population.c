@@ -92,3 +92,41 @@ struct Personne ***clonerGrillePopulation(
   }
   return grille_de_personnes;
 }
+
+/**
+ * @brief Affiche la grille de population
+ *
+ * @param population_source Population source.
+ */
+void afficherGrillePopulation(struct Population *population) {
+  for (unsigned long i = 0; i < population->cote; i++) printf("-");
+  printf("\n");
+  for (unsigned long i = 0; i < population->cote; i++) {
+    for (unsigned long j = 0; j < population->cote; j++) {
+      switch (population->grille_de_personnes[i][j]->state) {
+        case IMMUNISE:
+          printf("*");
+          break;
+
+        case MALADE:
+          printf("o");
+          break;
+
+        case SAIN:
+          printf("+");
+          break;
+
+        case MORT:
+          printf(" ");
+          break;
+
+        default:
+          break;
+      }
+    }
+    printf("\n");
+  }
+  for (unsigned long i = 0; i < population->cote; i++) printf("-");
+  printf("\n");
+  printf("\n");
+}

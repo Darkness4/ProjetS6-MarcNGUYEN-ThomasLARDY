@@ -246,11 +246,11 @@ char **graphique(struct Data *data, const char *fichier_data,
       curseur++;
     }
     for (unsigned long i = 0; i < ratio_nb_MORT_norm; i++) curseur++;
-    if (curseur >= hauteur)
-      printf(
-          "Attention, le curseur aurait du provoquer une erreur de "
-          "segmentation !\n"
-          "Le graph n'est pas precis !\n");
+    // if (curseur >= hauteur)
+    // printf(
+    //     "Attention, le curseur aurait du provoquer une erreur de "
+    //     "segmentation !\n"
+    //     "Le graph n'est pas precis !\n");
   }
 
   // Ecrire sur le fichier

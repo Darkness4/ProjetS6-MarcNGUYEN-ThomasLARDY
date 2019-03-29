@@ -54,6 +54,10 @@ int main(void) {
   }
   printf(
       "    State Personne Clone == State Personne Source: \x1B[32mOK\x1B[0m\n");
+  printf("  afficherGrillePopulation:\n");
+  afficherGrillePopulation(population);
+  printf(
+      "    Affichage OK: \x1B[32mOK\x1B[0m\n");
 
   return 0;
 }

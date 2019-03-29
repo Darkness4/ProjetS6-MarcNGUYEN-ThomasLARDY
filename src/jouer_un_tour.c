@@ -28,7 +28,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
 #include "jouer_un_tour.h"
 
@@ -79,8 +78,6 @@ char presenceZombie(struct Population *population) {
 void jouerTour(struct Population *population, double beta, double gamma,
                double lambda) {
   const long unsigned cote = population->cote;
-
-  srand(time(NULL));
   // On va modifier une population->grille_de_personnes tampon pour ne pas
   // modifier la population->grille_de_personnes originale en cours de
   // traitement.

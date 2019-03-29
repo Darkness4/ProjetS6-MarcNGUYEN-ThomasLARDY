@@ -22,7 +22,9 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "jouer_un_tour.h"
 #include "population.h"
@@ -38,6 +40,7 @@
  */
 int main(int argc, char const* argv[]) {
   // Default
+  srand(time(NULL));
   unsigned long cote = 10;
   unsigned long hauteur = 100;
   unsigned long limite = 80;
@@ -86,9 +89,11 @@ int main(int argc, char const* argv[]) {
 
   // Traitement
   population->grille_de_personnes[0][0]->state = MALADE;
+  afficherGrillePopulation(population);
   for (unsigned long i = 0; i < tour_max; i++) {
     jouerTour(population, beta, gamma, lambda);
     stats = getStatistique(population);
+    afficherGrillePopulation(population);
     appendData(data, stats);
   }
 

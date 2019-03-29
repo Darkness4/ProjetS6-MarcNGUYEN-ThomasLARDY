@@ -32,5 +32,6 @@ struct Population {
 
 struct Population *creerPopulation(const unsigned long cote);
 struct Personne ***clonerGrillePopulation(struct Population *population_source);
+void afficherGrillePopulation(struct Population *population);
 
 #endif  // POPULATION_H
