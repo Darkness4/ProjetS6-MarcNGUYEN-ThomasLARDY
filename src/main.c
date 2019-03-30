@@ -44,6 +44,7 @@ int main(int argc, char const* argv[]) {
   unsigned long cote = 10;
   unsigned long hauteur = 100;
   unsigned long limite = 80;
+  unsigned int temps_incube = 4;
   double beta = 0.5;    // MALADE -> MORT
   double gamma = 0.1;   // MALADE -> IMMUNISE
   double lambda = 1.0;  // SAIN -> MALADE
@@ -95,7 +96,7 @@ int main(int argc, char const* argv[]) {
   population->grille_de_personnes[0][0]->state = MALADE;
   afficherGrillePopulation(population);
   for (unsigned long i = 0; i < tour_max && zombiePresent(population); i++) {
-    jouerTour(population, beta, gamma, lambda);
+    jouerTour(population, beta, gamma, lambda, temps_incube);
     stats = getStatistique(population);
     afficherGrillePopulation(population);
     appendData(data, stats);

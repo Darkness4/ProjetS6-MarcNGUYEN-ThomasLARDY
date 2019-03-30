@@ -25,6 +25,10 @@ struct Statistique {
    * @brief Nombre de Personne MALADE.
    */
   long nb_MALADE;
+  /**
+   * @brief Nombre de Personne INCUBE.
+   */
+  long nb_INCUBE;
 };
 
 /**

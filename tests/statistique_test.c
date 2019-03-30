@@ -122,18 +122,20 @@ void lire_et_comparer(struct Data *data, const char *fichier_data) {
   long nb_SAIN;
   long nb_MORT;
   long nb_MALADE;
+  long nb_INCUBE;
 
   fscanf(file, "%lu\n", &pop_tot);
   assert(data->population_totale == pop_tot);
   fscanf(file, "%lu\n", &tours);
   assert(data->tours == tours);
 
-  while (fscanf(file, "%lu %li %li %li %li\n", &tour, &nb_IMMUNISE, &nb_SAIN,
-                &nb_MORT, &nb_MALADE) != EOF) {
+  while (fscanf(file, "%lu %li %li %li %li %li\n", &tour, &nb_IMMUNISE,
+                &nb_SAIN, &nb_MORT, &nb_MALADE, &nb_INCUBE) != EOF) {
     assert(data->liste_statistiques[tour]->nb_SAIN == nb_SAIN);
     assert(data->liste_statistiques[tour]->nb_IMMUNISE == nb_IMMUNISE);
     assert(data->liste_statistiques[tour]->nb_MORT == nb_MORT);
     assert(data->liste_statistiques[tour]->nb_MALADE == nb_MALADE);
+    assert(data->liste_statistiques[tour]->nb_INCUBE == nb_INCUBE);
   }
   printf("    Validation %s: \x1B[32mOK\x1B[0m\n", fichier_data);
 }
