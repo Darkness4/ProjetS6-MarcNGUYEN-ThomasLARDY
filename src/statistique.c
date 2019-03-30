@@ -74,6 +74,7 @@ void appendData(struct Data *data, struct Statistique stats) {
   data->liste_statistiques[data->tours]->nb_SAIN = stats.nb_SAIN;
   data->liste_statistiques[data->tours]->nb_MORT = stats.nb_MORT;
   data->liste_statistiques[data->tours]->nb_MALADE = stats.nb_MALADE;
+  data->liste_statistiques[data->tours]->nb_INCUBE = stats.nb_INCUBE;
   data->tours++;
 }
 
@@ -96,11 +97,12 @@ void exporter(struct Data *data, const char *fichier_data) {
   fprintf(file, "%lu\n", data->population_totale);
   fprintf(file, "%lu\n", data->tours);
   for (unsigned long i = 0; i < data->tours; i++) {
-    fprintf(file, "%lu %li %li %li %li\n", i,
+    fprintf(file, "%lu %li %li %li %li %li\n", i,
             data->liste_statistiques[i]->nb_IMMUNISE,
             data->liste_statistiques[i]->nb_SAIN,
             data->liste_statistiques[i]->nb_MORT,
-            data->liste_statistiques[i]->nb_MALADE);
+            data->liste_statistiques[i]->nb_MALADE,
+            data->liste_statistiques[i]->nb_INCUBE);
   }
 
   fclose(file);
@@ -125,6 +127,8 @@ struct Data *deriver(struct Data *data) {
                     data->liste_statistiques[i]->nb_MORT;
     stats.nb_MALADE = data->liste_statistiques[i + 1]->nb_MALADE -
                       data->liste_statistiques[i]->nb_MALADE;
+    stats.nb_INCUBE = data->liste_statistiques[i + 1]->nb_INCUBE -
+                      data->liste_statistiques[i]->nb_INCUBE;
     appendData(data_derive, stats);
   }
   data_derive->tours = data->tours - 1;
@@ -148,7 +152,7 @@ struct Data *deriver(struct Data *data) {
  * @return struct Statistique Structure contenant le nombre de struct State.
  */
 struct Statistique getStatistique(struct Population *population) {
-  struct Statistique statistique = {0, 0, 0, 0};
+  struct Statistique statistique = {0, 0, 0, 0, 0};
   for (long unsigned i = 0; i < population->cote; i++) {
     for (long unsigned j = 0; j < population->cote; j++) {
       switch (population->grille_de_personnes[i][j]->state) {
@@ -163,6 +167,9 @@ struct Statistique getStatistique(struct Population *population) {
           break;
         case MORT:
           statistique.nb_MORT++;
+          break;
+        case INCUBE:
+          statistique.nb_INCUBE++;
           break;
       }
     }
@@ -216,11 +223,13 @@ char **graphique(struct Data *data, const char *fichier_data,
     unsigned long ratio_nb_MORT_norm = 0;
     unsigned long ratio_nb_SAIN_norm = 0;
     unsigned long ratio_nb_MALADE_norm = 0;
+    unsigned long ratio_nb_INCUBE_norm = 0;
     for (unsigned long i = 0; i < ratio_tour; i++) {
       ratio_nb_IMMUNISE_norm += stats[tour + i]->nb_IMMUNISE;
       ratio_nb_MORT_norm += stats[tour + i]->nb_MORT;
       ratio_nb_SAIN_norm += stats[tour + i]->nb_SAIN;
       ratio_nb_MALADE_norm += stats[tour + i]->nb_MALADE;
+      ratio_nb_INCUBE_norm += stats[tour + i]->nb_INCUBE;
     }
 
     // Ratio normalizé (quand positif, conversion float vers int = floor)
@@ -230,6 +239,8 @@ char **graphique(struct Data *data, const char *fichier_data,
     ratio_nb_SAIN_norm = ratio_nb_SAIN_norm * hauteur / ratio_tour / pop_tot;
     ratio_nb_MALADE_norm =
         ratio_nb_MALADE_norm * hauteur / ratio_tour / pop_tot;
+    ratio_nb_INCUBE_norm =
+        ratio_nb_INCUBE_norm * hauteur / ratio_tour / pop_tot;
 
     // Print
     unsigned long curseur = 0;
@@ -239,6 +250,10 @@ char **graphique(struct Data *data, const char *fichier_data,
     }
     for (unsigned long i = 0; i < ratio_nb_SAIN_norm; i++) {
       graphique[curseur][tour / ratio_tour] = '+';
+      curseur++;
+    }
+    for (unsigned long i = 0; i < ratio_nb_INCUBE_norm; i++) {
+      graphique[curseur][tour / ratio_tour] = 'u';
       curseur++;
     }
     for (unsigned long i = 0; i < ratio_nb_MALADE_norm; i++) {

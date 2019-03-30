@@ -4,7 +4,7 @@ TARGET ?= $(shell basename $(CURDIR))
 
 # Compiler
 CC ?= gcc
-CFLAGS ?= -Wall -Wextra -lm -I .
+CFLAGS ?= -g -Wall -Wextra -lm -I .
 
 # Linker
 LINKER ?= $(CC)

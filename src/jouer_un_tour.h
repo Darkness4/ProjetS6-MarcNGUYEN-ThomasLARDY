@@ -5,6 +5,6 @@
 
 char zombiePresent(struct Population *population);
 void jouerTour(struct Population *population, double beta, double gamma,
-               double lambda);
+               double lambda, unsigned int temps_incube);
 
 #endif  // JOUER_UN_TOUR_H

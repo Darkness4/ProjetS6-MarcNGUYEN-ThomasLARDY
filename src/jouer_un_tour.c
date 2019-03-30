@@ -48,7 +48,9 @@ char zombiePresent(struct Population *population) {
   unsigned long cote = population->cote;
   for (unsigned long i = 0; i < cote; i++) {
     for (unsigned long j = 0; j < cote; j++) {
-      if (population->grille_de_personnes[i][j]->state == MALADE) return 1;
+      if (population->grille_de_personnes[i][j]->state == MALADE ||
+          population->grille_de_personnes[i][j]->state == INCUBE)
+        return 1;
     }
   }
   return 0;
@@ -74,9 +76,10 @@ char zombiePresent(struct Population *population) {
  * @param gamma Probabilité d'un individu infecté de guérir.
  * @param lambda Probabilité d'un individu sain d'être contaminé par un individu
  * voisin infecté.
+ * @param temps_incube Nombre de tours durant lesquels la personne est incubée.
  */
 void jouerTour(struct Population *population, double beta, double gamma,
-               double lambda) {
+               double lambda, unsigned int temps_incube) {
   const long unsigned cote = population->cote;
   // On va modifier une population->grille_de_personnes tampon pour ne pas
   // modifier la population->grille_de_personnes originale en cours de
@@ -94,21 +97,28 @@ void jouerTour(struct Population *population, double beta, double gamma,
 
           if (j > 0)
             voisin +=
-                (population->grille_de_personnes[i][j - 1]->state == MALADE);
+                (population->grille_de_personnes[i][j - 1]->state == MALADE ||
+                 population->grille_de_personnes[i][j - 1]->state == INCUBE);
           if (j < cote - 1)
             voisin +=
-                (population->grille_de_personnes[i][j + 1]->state == MALADE);
+                (population->grille_de_personnes[i][j + 1]->state == MALADE ||
+                 population->grille_de_personnes[i][j + 1]->state == INCUBE);
           if (i > 0)
             voisin +=
-                (population->grille_de_personnes[i - 1][j]->state == MALADE);
+                (population->grille_de_personnes[i - 1][j]->state == MALADE ||
+                 population->grille_de_personnes[i - 1][j]->state == INCUBE);
           if (i < cote - 1)
             voisin +=
-                (population->grille_de_personnes[i + 1][j]->state == MALADE);
+                (population->grille_de_personnes[i + 1][j]->state == MALADE ||
+                 population->grille_de_personnes[i + 1][j]->state == INCUBE);
           // on applique la probabilité que l'individu tombe malade pour chaque
           // voisin.
-          while (voisin > 0 && grille_tampon[i][j]->state != MALADE) {
+          while (voisin > 0 && grille_tampon[i][j]->state != INCUBE) {
             nb_aleatoire = (double)rand() / RAND_MAX;
-            if (nb_aleatoire < lambda) grille_tampon[i][j]->state = MALADE;
+            if (nb_aleatoire < lambda) {
+              grille_tampon[i][j]->state = INCUBE;
+              grille_tampon[i][j]->temps_incube = temps_incube;
+            }
             voisin--;
           }
           break;
@@ -119,6 +129,15 @@ void jouerTour(struct Population *population, double beta, double gamma,
           if (nb_aleatoire < beta) grille_tampon[i][j]->state = MORT;
           nb_aleatoire = (double)rand() / RAND_MAX;
           if (nb_aleatoire < gamma) grille_tampon[i][j]->state = IMMUNISE;
+          break;
+
+        case INCUBE:
+          // S'il est incubé, on diminue le temps incubé de 1 et il devient
+          // malade si t = 0
+          if (population->grille_de_personnes[i][j]->temps_incube == 0)
+            grille_tampon[i][j]->state = MALADE;
+          else
+            grille_tampon[i][j]->temps_incube--;
           break;
 
         default:

@@ -88,6 +88,8 @@ struct Personne ***clonerGrillePopulation(
 
       grille_de_personnes[i][j]->state =
           population_source->grille_de_personnes[i][j]->state;
+      grille_de_personnes[i][j]->temps_incube =
+          population_source->grille_de_personnes[i][j]->temps_incube;
     }
   }
   return grille_de_personnes;
@@ -118,6 +120,9 @@ void afficherGrillePopulation(struct Population *population) {
 
         case MORT:
           printf(" ");
+          break;
+        case INCUBE:
+          printf("u");
           break;
 
         default:

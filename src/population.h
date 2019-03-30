@@ -4,16 +4,17 @@
 /**
  * @brief Etats pouvant être une Personne.
  */
-enum State { SAIN, MALADE, MORT, IMMUNISE };
+enum State { SAIN, MALADE, MORT, IMMUNISE, INCUBE };
 
 /**
  * @brief Structure Personne, contenant les propriétés de celle-ci.
  */
 struct Personne {
   /**
-   * @brief Etat de la Personne.
+   * @brief Etat de la Personne et temps d'incubation.
    */
   enum State state;
+  int temps_incube;
 };
 
 /**
