@@ -29,6 +29,8 @@ build-linux:
     paths:
       - bin
     expire_in: 1 week
+  only:
+  - master
 
 build-windows:
   stage: build
@@ -39,6 +41,8 @@ build-windows:
     paths:
       - bin
     expire_in: 1 week
+  only:
+  - master
 
 test-docs:
   stage: test
@@ -46,18 +50,32 @@ test-docs:
   - apt install -y doxygen graphviz
   - doxygen Doxyfile
 
+test-build-linux:
+  stage: build
+  script:
+  - apt install -y make gcc
+  - make -j4
+  except:
+  - master
+
+test-build-windows:
+  stage: build
+  script:
+  - apt install -y make gcc-mingw-w64-x86-64
+  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=ProjetS6-MarcNGUYEN-ThomasLARDY.exe
+  except:
+  - master
+
 unit-tests-linux:
   stage: test
   script:
   - apt install -y make gcc
-  - cd tests
-  - make -j4
+  - make tests -j4
   - for file in bin/*; do $file; done
 
 unit-tests-windows:
   stage: test
   script:
   - apt install -y make gcc-mingw-w64-x86-64
-  - cd tests
-  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc  # TODO: run on linux, windows bin
+  - make all -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc  # TODO: run on linux, windows bin
 
