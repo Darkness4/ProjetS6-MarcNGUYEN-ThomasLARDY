@@ -6,8 +6,7 @@
 /**
  * @file main.c
  *
- * @brief Propagation d’une épidémie dans une population avec une structure de
- * graphe
+ * @brief Propagation d’une épidémie dans une population
  *
  * Fichier principal.
  *
@@ -30,58 +29,89 @@
 #include "population.h"
 #include "statistique.h"
 
+void printHelp(void);
+
 /**
  * @brief Execute la simulation d'une propagation, et sort des statistiques.
  *
+ * Executez le programme avec l'argument --help pour connaitre les arguments.
  *
- * @param argc Nombres d'arguments
- * @param argv [1] cote: Population de taille cote*cote
+ * @param argc
+ * @param argv
  * @return int exit(0)
  */
 int main(int argc, char const* argv[]) {
-  // Default
+  // Defauts
   srand(time(NULL));
   unsigned long cote = 10;
-  unsigned long hauteur = 100;
+  unsigned long hauteur = 20;
   unsigned long limite = 80;
-  unsigned int temps_incube = 4;
-  double beta = 0.5;    // MALADE -> MORT
-  double gamma = 0.1;   // MALADE -> IMMUNISE
-  double lambda = 1.0;  // SAIN -> MALADE
+  unsigned duree_incube = 4;
+  double beta = 0.5;                        // MALADE -> MORT
+  double gamma = 0.1;                       // MALADE -> IMMUNISE
+  double lambda = 1.0;                      // SAIN -> MALADE
+  double chance_quarantaine = 0.1;          // duree_quarantaine
+  double chance_decouverte_vaccin = 0.001;  // MALADE -> VACINE par découverte
   char* file_graph = "graphique.txt";
   char* file_data = "data.txt";
   char* file_tableau = "tableau de bord.txt";
-  unsigned long tour_max = 500;
+  unsigned long tour_max = 100;
+  int duree_quarantaine = 20;  // Très grand au tps d'incub
+  int cordon_sanitaire = 10;   // Généralement égal au temps d'incubation
 
-  // Constructeur
-  for (int i = 0; i < argc; i++) {
+  // Arguments positionnés
+  long x, y;
+  sscanf(argv[1], "%lu", &x);
+  sscanf(argv[2], "%lu", &y);
+
+  // Arguments nommés (incrémenter i_défaut si arguments positionné)
+  for (int i = 3; i < argc; i++) {
+    if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) printHelp();
+
     if (!strcmp(argv[i], "-c") || !strcmp(argv[i], "--cote"))
       sscanf(argv[i + 1], "%lu", &cote);
-    if (!strcmp(argv[i], "-b") || !strcmp(argv[i], "--beta") ||
-        !strcmp(argv[i], "--mort"))
+
+    if (!strcmp(argv[i], "-b") || !strcmp(argv[i], "--mort"))
       sscanf(argv[i + 1], "%lf", &beta);
-    if (!strcmp(argv[i], "-g") || !strcmp(argv[i], "--gamma") ||
-        !strcmp(argv[i], "--immunise"))
+
+    if (!strcmp(argv[i], "-g") || !strcmp(argv[i], "--immunise"))
       sscanf(argv[i + 1], "%lf", &gamma);
-    if (!strcmp(argv[i], "-la") || !strcmp(argv[i], "--lambda") ||
-        !strcmp(argv[i], "--malade"))
+
+    if (!strcmp(argv[i], "-la") || !strcmp(argv[i], "--malade"))
       sscanf(argv[i + 1], "%lf", &lambda);
-    if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--hauteur"))
+
+    if (!strcmp(argv[i], "-ha") || !strcmp(argv[i], "--hauteur"))
       sscanf(argv[i + 1], "%lu", &hauteur);
+
     if (!strcmp(argv[i], "-li") || !strcmp(argv[i], "--limite"))
       sscanf(argv[i + 1], "%lu", &limite);
-    if (!strcmp(argv[i], "-fg") || !strcmp(argv[i], "--graph") ||
-        !strcmp(argv[i], "-og"))
+
+    if (!strcmp(argv[i], "--graph") || !strcmp(argv[i], "-og"))
       strcpy(file_graph, argv[i + 1]);
-    if (!strcmp(argv[i], "-fd") || !strcmp(argv[i], "--data") ||
-        !strcmp(argv[i], "-o") || !strcmp(argv[i], "-od"))
+
+    if (!strcmp(argv[i], "--data") || !strcmp(argv[i], "-od"))
       strcpy(file_data, argv[i + 1]);
-    if (!strcmp(argv[i], "-t") || !strcmp(argv[i], "--tours") ||
-        !strcmp(argv[i], "--tour"))
+
+    if (!strcmp(argv[i], "-t") || !strcmp(argv[i], "--tours"))
       sscanf(argv[i + 1], "%lu", &tour_max);
-    if (!strcmp(argv[i], "-ft") || !strcmp(argv[i], "--tableau") ||
-        !strcmp(argv[i], "-ot"))
+
+    if (!strcmp(argv[i], "--tableau") || !strcmp(argv[i], "-ot"))
       strcpy(file_tableau, argv[i + 1]);
+
+    if (!strcmp(argv[i], "-di") || !strcmp(argv[i], "--duree-incube"))
+      sscanf(argv[i + 1], "%u", &duree_incube);
+
+    if (!strcmp(argv[i], "--quarantaine") || !strcmp(argv[i], "-q"))
+      sscanf(argv[i + 1], "%lf", &chance_quarantaine);
+
+    if (!strcmp(argv[i], "--vaccin") || !strcmp(argv[i], "-v"))
+      sscanf(argv[i + 1], "%lf", &chance_decouverte_vaccin);
+
+    if (!strcmp(argv[i], "--cordon"))
+      sscanf(argv[i + 1], "%i", &cordon_sanitaire);
+
+    if (!strcmp(argv[i], "-dq") || !strcmp(argv[i], "--duree-quarantaine"))
+      sscanf(argv[i + 1], "%i", &duree_quarantaine);
   }
 
   // Init
@@ -93,23 +123,61 @@ int main(int argc, char const* argv[]) {
   appendData(data, stats);
 
   // Traitement
-  population->grille_de_personnes[0][0]->state = MALADE;
   afficherGrillePopulation(population);
+  patient_zero(population, x, y);
   for (unsigned long i = 0; i < tour_max && zombiePresent(population); i++) {
-    jouerTour(population, beta, gamma, lambda, temps_incube);
+    jouerTour(population, beta, gamma, lambda, chance_quarantaine,
+              chance_decouverte_vaccin, duree_incube, cordon_sanitaire,
+              duree_quarantaine);
     stats = getStatistique(population);
     afficherGrillePopulation(population);
     appendData(data, stats);
   }
 
   // Output
-  char** graph = graphique(data, file_graph, hauteur, limite);
+  graphique(data, file_graph, hauteur, limite);
   exporter(data, file_data);
-  for (unsigned long i = 0; i < hauteur; i++) {
-    for (unsigned long j = 0; j < limite; j++) printf("%c", graph[i][j]);
-    printf("\n");
-  }
   tableau(data, file_tableau);
 
   return 0;
+}
+
+/**
+ * @brief Affiche l'aide.
+ *
+ */
+void printHelp(void) {
+  char* help =
+      "Projet Semestre 6, Propagation d’une épidémie dans une population par Marc NGUYEN et Thomas LARDY en Mar-Apr 2019\n\
+\n\
+Usage: ProjetS6-MarcNGUYEN-ThomasLARDY [options]\n\n\
+Population Options:\n\
+  -c,  --cote             côte de la grille de personnes            [défaut: 10]\n\
+  -t,  --tours            tours max de la simulation               [défaut: 500]\n\
+\n\
+Simulation Options Générales:\n\
+  -b,  --mort             [0, 1] proba de mourir par la maladie    [défaut: 0.5]\n\
+  -g,  --immunise         [0, 1] proba d'être immunise             [défaut: 0.1]\n\
+  -la, --malade           [0, 1] proba de contamination            [défaut: 1.0]\n\
+\n\
+Output Options:\n\
+  -od, --data             nom de données brutes               [défaut: data.txt]\n\
+  -og, --graph            nom du graphique               [défaut: graphique.txt]\n\
+  -ot, --tableau          nom du tableau de bord   [défaut: tableau de bord.txt]\n\
+  -li, --limite           limite de char/ligne du graphique ASCII   [défaut: 80]\n\
+  -ha, --hauteur          hauteur du graphique ASCII                [défaut: 20]\n\
+\n\
+Extension Incubation:\n\
+  -di, --duree-incube     durée d'une incubation [défaut: 4]\n\
+\n\
+Extension Vaccin et Quarantaine:\n\
+  -q,  --quarantaine      [0, 1] proba d'une quarantaine           [défaut: 0.1]\n\
+  -dq, --duree-quarantaine  durée d'une quarantaine                 [défaut: 10]\n\
+       --cordon           taille du cordon sanitaire                 [défaut: 5]\n\
+  -v,  --vaccin           [0, 1] proba de développer un vaccin   [défaut: 0.001]\n\
+\n\
+Autres:\n\
+  -h,  --help             Affiche ce dialogue\n";
+  printf(help);
+  exit(0);
 }

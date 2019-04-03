@@ -56,8 +56,17 @@ int main(void) {
       "    State Personne Clone == State Personne Source: \x1B[32mOK\x1B[0m\n");
   printf("  afficherGrillePopulation:\n");
   afficherGrillePopulation(population);
-  printf(
-      "    Affichage OK: \x1B[32mOK\x1B[0m\n");
+  printf("    Affichage OK: \x1B[32mOK\x1B[0m\n");
+
+  printf("  patient_zero:\n");
+  patient_zero(population, 1, 1);
+  assert(population->grille_de_personnes[1][1]->state == MALADE);
+  printf("    State OK: \x1B[32mOK\x1B[0m\n");
+
+  printf("  getTaillePopulation:\n");
+  assert(population->cote * population->cote ==
+         getTaillePopulation(population));
+  printf("    Taille OK: \x1B[32mOK\x1B[0m\n");
 
   return 0;
 }

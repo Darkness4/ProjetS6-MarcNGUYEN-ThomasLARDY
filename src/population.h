@@ -4,17 +4,28 @@
 /**
  * @brief Etats pouvant être une Personne.
  */
-enum State { SAIN, MALADE, MORT, IMMUNISE, INCUBE };
+enum State { SAIN, MALADE, MORT, IMMUNISE, INCUBE, VACCINE };
 
 /**
- * @brief Structure Personne, contenant les propriétés de celle-ci.
+ * @brief Personne ayant un State, une duree_incube et une duree_quarantaine.
  */
 struct Personne {
   /**
-   * @brief Etat de la Personne et temps d'incubation.
+   * @brief Etat de la Personne.
    */
   enum State state;
-  int temps_incube;
+  /**
+   * @brief Durée d'une incubation (aucun symptôme mais peut infecter).
+   */
+  int duree_incube;
+  /**
+   * @brief Durée d'une quarantaine (secteur bloquant l'infection vers l'ext.).
+   */
+  int duree_quarantaine;
+  /**
+   * @brief Mesure la distance entre le MALADE et la personne.
+   */
+  int cordon_sanitaire;
 };
 
 /**
@@ -34,5 +45,8 @@ struct Population {
 struct Population *creerPopulation(const unsigned long cote);
 struct Personne ***clonerGrillePopulation(struct Population *population_source);
 void afficherGrillePopulation(struct Population *population);
+void patient_zero(struct Population *population, unsigned long x,
+                  unsigned long y);
+unsigned long getTaillePopulation(struct Population *population);
 
 #endif  // POPULATION_H

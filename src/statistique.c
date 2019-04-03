@@ -3,8 +3,18 @@
  *
  * @brief Gère le stockage de donnée et la récupération de métrique.
  *
+ * Contient:
+ * - créer une base de donnée
+ * - ajouter à une base de données
+ * - exporter une base de données
+ * - dériver les valeurs de la base de données
+ * - obtenir des Statistique
+ * - exporter et afficher un graphique
+ * - exporter et afficher un tableau de bord
+ *
  * Usage:
- * @code
+ * ```
+ * // Init
  * struct Population *population = creerPopulation(7);  // population.h
  * struct Data *data = creerData(void);
  * struct Statistique stats = getStatistique(population);
@@ -15,12 +25,14 @@
  * // Traitement ...
  *
  * appendData(data, stats);
- *
  * struct Data *data_derive = deriver(data);
  *
- * exporter(data, "data.txt")
- * exporter(data_derive, "data_derive.txt")
- * @endcode
+ * // Out
+ * exporter(data, "data.txt");
+ * exporter(data_derive, "data_derive.txt");
+ * char* graph = graphique(data, "graphique.txt", 100, 80);
+ * tableau(data, "tableau");
+ * ```
  *
  * @author Marc NGUYEN
  * @author Thomas LARDY
@@ -49,12 +61,12 @@ struct Data *creerData(void) {
  * @brief Ajoute une donnée à la base.
  *
  * Usage:
- * @code
+ * ```
  * struct Population *population = creerPopulation(7);
  * struct Statistique stats = getStatistique(population);
  * struct Data *data = creerData();
  * appendData(data, stats);
- * @endcode
+ * ```
  *
  * @param data Base de données.
  * @param stats Donnée à ajouter.
@@ -75,6 +87,7 @@ void appendData(struct Data *data, struct Statistique stats) {
   data->liste_statistiques[data->tours]->nb_MORT = stats.nb_MORT;
   data->liste_statistiques[data->tours]->nb_MALADE = stats.nb_MALADE;
   data->liste_statistiques[data->tours]->nb_INCUBE = stats.nb_INCUBE;
+  data->liste_statistiques[data->tours]->nb_VACCINE = stats.nb_VACCINE;
   data->tours++;
 }
 
@@ -97,12 +110,13 @@ void exporter(struct Data *data, const char *fichier_data) {
   fprintf(file, "%lu\n", data->population_totale);
   fprintf(file, "%lu\n", data->tours);
   for (unsigned long i = 0; i < data->tours; i++) {
-    fprintf(file, "%lu %li %li %li %li %li\n", i,
+    fprintf(file, "%lu %li %li %li %li %li %li\n", i,
             data->liste_statistiques[i]->nb_IMMUNISE,
             data->liste_statistiques[i]->nb_SAIN,
             data->liste_statistiques[i]->nb_MORT,
             data->liste_statistiques[i]->nb_MALADE,
-            data->liste_statistiques[i]->nb_INCUBE);
+            data->liste_statistiques[i]->nb_INCUBE,
+            data->liste_statistiques[i]->nb_VACCINE);
   }
 
   fclose(file);
@@ -129,6 +143,8 @@ struct Data *deriver(struct Data *data) {
                       data->liste_statistiques[i]->nb_MALADE;
     stats.nb_INCUBE = data->liste_statistiques[i + 1]->nb_INCUBE -
                       data->liste_statistiques[i]->nb_INCUBE;
+    stats.nb_VACCINE = data->liste_statistiques[i + 1]->nb_VACCINE -
+                       data->liste_statistiques[i]->nb_VACCINE;
     appendData(data_derive, stats);
   }
   data_derive->tours = data->tours - 1;
@@ -140,19 +156,21 @@ struct Data *deriver(struct Data *data) {
  * @brief Obtenir des métriques intéressantes sur la population.
  *
  * Usage:
- * @code
+ * ```
  * struct Statistique stats = getStatistique(population);
  * printf("%lu\n", stats.nb_IMMUNISE);
  * printf("%lu\n", stats.nb_SAIN);
  * printf("%lu\n", stats.nb_MALADE);
  * printf("%lu\n", stats.nb_MORT);
- * @endcode
+ * printf("%lu\n", stats.nb_INCUBE);
+ * printf("%lu\n", stats.nb_VACCINE);
+ * ```
  *
  * @param population Population contenant la tailler et la grille.
  * @return struct Statistique Structure contenant le nombre de struct State.
  */
 struct Statistique getStatistique(struct Population *population) {
-  struct Statistique statistique = {0, 0, 0, 0, 0};
+  struct Statistique statistique = {0, 0, 0, 0, 0, 0};
   for (long unsigned i = 0; i < population->cote; i++) {
     for (long unsigned j = 0; j < population->cote; j++) {
       switch (population->grille_de_personnes[i][j]->state) {
@@ -171,6 +189,9 @@ struct Statistique getStatistique(struct Population *population) {
         case INCUBE:
           statistique.nb_INCUBE++;
           break;
+        case VACCINE:
+          statistique.nb_VACCINE++;
+          break;
       }
     }
   }
@@ -178,22 +199,16 @@ struct Statistique getStatistique(struct Population *population) {
 }
 
 /**
- * @brief Récupérer la taille totale de la Population de la Population
- *
- * @param population Structure Population.
- * @return unsigned long Taille totale de la population.
- */
-unsigned long getTaillePopulation(struct Population *population) {
-  return population->cote * population->cote;
-}
-
-/**
  * @brief Exporte un graph style ASCII dans un fichier fichier_data.
  *
- * IMMUNISE = '*'
- * SAIN = '+'
- * MALADE = 'o'
- * MORT = ' '
+ * L'axe horizontal représente une durée.
+ * L'axe vertical représente le ratio.
+ * - IMMUNISE = '*'. Une étoile, parce qu'il est immortel.
+ * - VACCINE = '$'. Un dollar, parce qu'il a payé un vaccin
+ * - SAIN = '.'. Un ., un homme en parfaite santé
+ * - INCUBE = 'u'. Un o pas formé
+ * - MALADE = 'o'. Malade, une bulle qui va pas tarder à éclater
+ * - MORT = ' '. Vide
  *
  * @param data Base de données.
  * @param fichier_data Nom du fichier à écrire.
@@ -212,6 +227,13 @@ char **graphique(struct Data *data, const char *fichier_data,
       graphique[i][j] = ' ';
     }
   }
+  char ***graphique_terminal = (char ***)malloc(sizeof(char **) * hauteur);
+  for (unsigned long i = 0; i < hauteur; i++) {
+    graphique_terminal[i] = (char **)malloc(sizeof(char *) * limite);
+    for (unsigned long j = 0; j < limite; j++) {
+      graphique_terminal[i][j] = " ";
+    }
+  }
   unsigned long pop_tot = data->population_totale;
   unsigned long ratio_tour = data->tours / limite;
   if (ratio_tour == 0) ratio_tour = 1;
@@ -224,12 +246,16 @@ char **graphique(struct Data *data, const char *fichier_data,
     unsigned long ratio_nb_SAIN_norm = 0;
     unsigned long ratio_nb_MALADE_norm = 0;
     unsigned long ratio_nb_INCUBE_norm = 0;
+    unsigned long ratio_nb_VACCINE_norm = 0;
+
+    // Somme
     for (unsigned long i = 0; i < ratio_tour; i++) {
       ratio_nb_IMMUNISE_norm += stats[tour + i]->nb_IMMUNISE;
       ratio_nb_MORT_norm += stats[tour + i]->nb_MORT;
       ratio_nb_SAIN_norm += stats[tour + i]->nb_SAIN;
       ratio_nb_MALADE_norm += stats[tour + i]->nb_MALADE;
       ratio_nb_INCUBE_norm += stats[tour + i]->nb_INCUBE;
+      ratio_nb_VACCINE_norm += stats[tour + i]->nb_VACCINE;
     }
 
     // Ratio normalizé (quand positif, conversion float vers int = floor)
@@ -241,23 +267,34 @@ char **graphique(struct Data *data, const char *fichier_data,
         ratio_nb_MALADE_norm * hauteur / ratio_tour / pop_tot;
     ratio_nb_INCUBE_norm =
         ratio_nb_INCUBE_norm * hauteur / ratio_tour / pop_tot;
+    ratio_nb_VACCINE_norm =
+        ratio_nb_VACCINE_norm * hauteur / ratio_tour / pop_tot;
 
     // Print
     unsigned long curseur = 0;
+    for (unsigned long i = 0; i < ratio_nb_VACCINE_norm; i++) {
+      graphique[curseur][tour / ratio_tour] = '$';
+      graphique_terminal[curseur][tour / ratio_tour] = "\e[33m$\e[0m";
+      curseur++;
+    }
     for (unsigned long i = 0; i < ratio_nb_IMMUNISE_norm; i++) {
-      graphique[curseur][tour / ratio_tour] = '*';
+      graphique[curseur][tour / ratio_tour] = 'm';
+      graphique_terminal[curseur][tour / ratio_tour] = "\e[33m*\e[0m";
       curseur++;
     }
     for (unsigned long i = 0; i < ratio_nb_SAIN_norm; i++) {
-      graphique[curseur][tour / ratio_tour] = '+';
-      curseur++;
-    }
-    for (unsigned long i = 0; i < ratio_nb_INCUBE_norm; i++) {
-      graphique[curseur][tour / ratio_tour] = 'u';
+      graphique[curseur][tour / ratio_tour] = '.';
+      graphique_terminal[curseur][tour / ratio_tour] = ".";
       curseur++;
     }
     for (unsigned long i = 0; i < ratio_nb_MALADE_norm; i++) {
       graphique[curseur][tour / ratio_tour] = 'o';
+      graphique_terminal[curseur][tour / ratio_tour] = "\e[31mo\e[0m";
+      curseur++;
+    }
+    for (unsigned long i = 0; i < ratio_nb_INCUBE_norm; i++) {
+      graphique[curseur][tour / ratio_tour] = 'u';
+      graphique_terminal[curseur][tour / ratio_tour] = "\e[35mu\e[0m";
       curseur++;
     }
     for (unsigned long i = 0; i < ratio_nb_MORT_norm; i++) curseur++;
@@ -283,9 +320,22 @@ char **graphique(struct Data *data, const char *fichier_data,
 
   fclose(file);
 
+  // stdout
+  for (unsigned long i = 0; i < hauteur; i++) {
+    for (unsigned long j = 0; j < limite; j++)
+      printf("%s", graphique_terminal[i][j]);
+    printf("\n");
+  }
+
   return graphique;
 }
 
+/**
+ * @brief Affiche et exporte un tableau de bord.
+ *
+ * @param data Base de données de Statistique de la Population
+ * @param fichier_tableau Nom du fichier à exporter.
+ */
 void tableau(struct Data *data, const char *fichier_tableau) {
   struct Data *data_derivee = deriver(data);
   long vit_MALADE_max = 0;
@@ -300,58 +350,64 @@ void tableau(struct Data *data, const char *fichier_tableau) {
       vit_MALADE_max = data_derivee->liste_statistiques[i]->nb_MALADE;
   }
 
-  printf("----------------------------------------------------------------\n");
-  printf("| Tours | Nb SAIN fin | Nb MORT fin | Nb IMMUNISE fin | Total  |\n");
-  printf("| ----- | ----------- | ----------- | --------------- | ------ |\n");
-  printf("| %5lu | %11li | %11li | %15li | %6lu |\n", data->tours,
-         data->liste_statistiques[data->tours - 1]->nb_SAIN,
-         data->liste_statistiques[data->tours - 1]->nb_MORT,
-         data->liste_statistiques[data->tours - 1]->nb_IMMUNISE,
-         data->population_totale);
   printf(
-      "|       |    %6.3lf %% |    %6.3lf %% |        %6.3lf %% |  100 %% |\n",
+      "-----------------------------------------------------------------\n"
+      "| Tours |   SAIN   |   MORT   |   IMMU   |   VACC   |   Total   |\n"
+      "| ----- | -------- | -------- | -------- | -------- | --------- |\n"
+      "| %5lu | %8li | %8li | %8li | %8lu | %9lu |\n",
+      data->tours, data->liste_statistiques[data->tours - 1]->nb_SAIN,
+      data->liste_statistiques[data->tours - 1]->nb_MORT,
+      data->liste_statistiques[data->tours - 1]->nb_IMMUNISE,
+      data->liste_statistiques[data->tours - 1]->nb_VACCINE,
+      data->population_totale);
+  printf(
+      "|       | %6.2lf %% | %6.2lf %% | %6.2lf %% | %6.2lf %% |     100 %% "
+      "|\n",
       (double)data->liste_statistiques[data->tours - 1]->nb_SAIN * 100 /
           data->population_totale,
       (double)data->liste_statistiques[data->tours - 1]->nb_MORT * 100 /
           data->population_totale,
       (double)data->liste_statistiques[data->tours - 1]->nb_IMMUNISE * 100 /
+          data->population_totale,
+      (double)data->liste_statistiques[data->tours - 1]->nb_VACCINE * 100 /
           data->population_totale);
-  printf("|--------------------------------------------------------------|\n");
-  printf("| Vitesse IMMUNISE max | Vitesse MALADE max | Vitesse MORT max |\n");
-  printf("| -------------------- | ------------------ | ---------------- |\n");
-  printf("| %20li | %18li | %16li |\n", vit_IMMUNISE_max, vit_MALADE_max,
-         vit_MORT_max);
-  printf("----------------------------------------------------------------\n");
+  printf(
+      "|---------------------------------------------------------------|\n"
+      "| Vitesse IMMUNISE max | Vitesse MALADE max | Vitesse MORT max  |\n"
+      "| -------------------- | ------------------ | ----------------- |\n"
+      "| %20li | %18li | %17li |\n",
+      vit_IMMUNISE_max, vit_MALADE_max, vit_MORT_max);
+  printf("-----------------------------------------------------------------\n");
 
   FILE *file = fopen(fichier_tableau, "w");
   fprintf(file,
-          "----------------------------------------------------------------\n");
-  fprintf(file,
-          "| Tours | Nb SAIN fin | Nb MORT fin | Nb IMMUNISE fin | Total  |\n");
-  fprintf(file,
-          "| ----- | ----------- | ----------- | --------------- | ------ |\n");
-  fprintf(file, "| %5lu | %11li | %11li | %15li | %6lu |\n", data->tours,
-          data->liste_statistiques[data->tours - 1]->nb_SAIN,
+          "-----------------------------------------------------------------\n"
+          "| Tours |   SAIN   |   MORT   |   IMMU   |   VACC   |   Total   |\n"
+          "| ----- | -------- | -------- | -------- | -------- | --------- |\n"
+          "| %5lu | %8li | %8li | %8li | %8lu | %9lu |\n",
+          data->tours, data->liste_statistiques[data->tours - 1]->nb_SAIN,
           data->liste_statistiques[data->tours - 1]->nb_MORT,
           data->liste_statistiques[data->tours - 1]->nb_IMMUNISE,
+          data->liste_statistiques[data->tours - 1]->nb_VACCINE,
           data->population_totale);
+  fprintf(file,
+          "|       | %6.2lf %% | %6.2lf %% | %6.2lf %% | %6.2lf %% |     100 "
+          "%% |\n",
+          (double)data->liste_statistiques[data->tours - 1]->nb_SAIN * 100 /
+              data->population_totale,
+          (double)data->liste_statistiques[data->tours - 1]->nb_MORT * 100 /
+              data->population_totale,
+          (double)data->liste_statistiques[data->tours - 1]->nb_IMMUNISE * 100 /
+              data->population_totale,
+          (double)data->liste_statistiques[data->tours - 1]->nb_VACCINE * 100 /
+              data->population_totale);
+  fprintf(file,
+          "|---------------------------------------------------------------|\n"
+          "| Vitesse IMMUNISE max | Vitesse MALADE max | Vitesse MORT max  |\n"
+          "| -------------------- | ------------------ | ----------------- |\n"
+          "| %20li | %18li | %17li |\n",
+          vit_IMMUNISE_max, vit_MALADE_max, vit_MORT_max);
   fprintf(
       file,
-      "|       |     %3.3lf %% |    %3.3lf %% |        %3.3lf %% |  100 %% |\n",
-      (double)data->liste_statistiques[data->tours - 1]->nb_SAIN * 100 /
-          data->population_totale,
-      (double)data->liste_statistiques[data->tours - 1]->nb_MORT * 100 /
-          data->population_totale,
-      (double)data->liste_statistiques[data->tours - 1]->nb_IMMUNISE * 100 /
-          data->population_totale);
-  fprintf(file,
-          "|--------------------------------------------------------------|\n");
-  fprintf(file,
-          "| Vitesse IMMUNISE max | Vitesse MALADE max | Vitesse MORT max |\n");
-  fprintf(file,
-          "| -------------------- | ------------------ | ---------------- |\n");
-  fprintf(file, "| %20li | %18li | %16li |\n", vit_IMMUNISE_max, vit_MALADE_max,
-          vit_MORT_max);
-  fprintf(file,
-          "----------------------------------------------------------------\n");
+      "-----------------------------------------------------------------\n");
 }

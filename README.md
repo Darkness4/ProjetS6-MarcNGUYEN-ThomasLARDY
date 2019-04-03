@@ -12,7 +12,9 @@ Par Marc NGUYEN et Thomas LARDY.
     - [Output](#output)
   - [Structure du programme](#structure-du-programme)
     - [main.c](#mainc)
-    - [population.c](#populationc)
+    - [population.c/h](#populationch)
+    - [statistique.c/h](#statistiquech)
+    - [jouer_un_tour.c/h](#jouer_un_tourch)
 
 ## Build
 
@@ -26,7 +28,6 @@ make -j4
 ### Linux
 
 Executer le fichier binaire dans le dossier bin.
-Un fichier "graph_6_7_without_negative_cycle.txt" doit exiter afin de pouvoir lancer le programme sans spécifier d'arguments.
 
 Par default :
 
@@ -56,6 +57,9 @@ OUTPUT
 
 Texte
 
-### population.c
+### population.c/h
 
+### statistique.c/h
+
+### jouer_un_tour.c/h
 
