@@ -29,6 +29,10 @@ struct Statistique {
    * @brief Nombre de Personne INCUBE.
    */
   long nb_INCUBE;
+  /**
+   * @brief Nombre de Personne VACCINE.
+   */
+  long nb_VACCINE;
 };
 
 /**
@@ -47,9 +51,9 @@ struct Data {
    * @brief Liste des statistiques
    *
    * Usage:
-   * @code
+   * ```
    * liste_statistiques[tour]->donnée.
-   * @endcode
+   * ```
    */
   struct Statistique **liste_statistiques;
 };
@@ -58,7 +62,6 @@ struct Data *creerData(void);
 struct Statistique getStatistique(struct Population *population);
 void appendData(struct Data *data, struct Statistique stats);
 void exporter(struct Data *data, const char *fichier_data);
-unsigned long getTaillePopulation(struct Population *population);
 struct Data *deriver(struct Data *data);
 char **graphique(struct Data *data, const char *fichier_data,
                  unsigned long hauteur, unsigned long limite);

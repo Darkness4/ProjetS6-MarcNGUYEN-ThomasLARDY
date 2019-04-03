@@ -25,9 +25,14 @@ OBJECTS_TEST := $(SOURCES_TEST:$(TESTDIR)/%.c=$(OBJDIR)/%.o)
 rm = rm -rf
 
 # Make all
-all: $(BINDIR)/population_test $(BINDIR)/statistique_test
+all: $(BINDIR)/population_test $(BINDIR)/statistique_test $(BINDIR)/jouer_un_tour_test
 
 # Link
+$(BINDIR)/jouer_un_tour_test: $(OBJDIR)/jouer_un_tour_test.o $(OBJDIR)/jouer_un_tour.o $(OBJDIR)/population.o
+	@mkdir -p $(BINDIR)
+	$(LINKER) $^ $(LFLAGS) -o $@
+	@echo "Linking complete!"
+
 $(BINDIR)/population_test: $(OBJDIR)/population_test.o $(OBJDIR)/population.o
 	@mkdir -p $(BINDIR)
 	$(LINKER) $^ $(LFLAGS) -o $@

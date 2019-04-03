@@ -94,9 +94,10 @@ int main(void) {
   appendData(data, stats);
   graphique(data, "graphique.txt", data->population_totale, data->tours);
   printf("    Graphique: \x1B[33mVOIR MANUELLEMENT\x1B[0m\n");
-  graphique(data, "graphique_div2.txt", 100, data->tours / 2);
+  graphique(data, "graphique_div2.txt", data->population_totale,
+            data->tours / 2);
   printf("    Graphique div2: \x1B[33mVOIR MANUELLEMENT\x1B[0m\n");
-  graphique(data, "graphique_90.txt", 100, 90);
+  graphique(data, "graphique_90.txt", data->population_totale, 90);
   printf("    Graphique 90: \x1B[33mVOIR MANUELLEMENT\x1B[0m\n");
   tableau(data, "tableau.txt");
   printf("    Tableau de bord: \x1B[33mVOIR MANUELLEMENT\x1B[0m\n");
@@ -123,19 +124,22 @@ void lire_et_comparer(struct Data *data, const char *fichier_data) {
   long nb_MORT;
   long nb_MALADE;
   long nb_INCUBE;
+  long nb_VACCINE;
 
   fscanf(file, "%lu\n", &pop_tot);
   assert(data->population_totale == pop_tot);
   fscanf(file, "%lu\n", &tours);
   assert(data->tours == tours);
 
-  while (fscanf(file, "%lu %li %li %li %li %li\n", &tour, &nb_IMMUNISE,
-                &nb_SAIN, &nb_MORT, &nb_MALADE, &nb_INCUBE) != EOF) {
+  while (fscanf(file, "%lu %li %li %li %li %li %li\n", &tour, &nb_IMMUNISE,
+                &nb_SAIN, &nb_MORT, &nb_MALADE, &nb_INCUBE,
+                &nb_VACCINE) != EOF) {
     assert(data->liste_statistiques[tour]->nb_SAIN == nb_SAIN);
     assert(data->liste_statistiques[tour]->nb_IMMUNISE == nb_IMMUNISE);
     assert(data->liste_statistiques[tour]->nb_MORT == nb_MORT);
     assert(data->liste_statistiques[tour]->nb_MALADE == nb_MALADE);
     assert(data->liste_statistiques[tour]->nb_INCUBE == nb_INCUBE);
+    assert(data->liste_statistiques[tour]->nb_VACCINE == nb_VACCINE);
   }
   printf("    Validation %s: \x1B[32mOK\x1B[0m\n", fichier_data);
 }
