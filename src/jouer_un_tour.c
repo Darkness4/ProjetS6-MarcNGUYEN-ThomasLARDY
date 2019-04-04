@@ -3,8 +3,6 @@
  *
  * @brief Lancer un tour.
  *
- * Fichier principal.
- *
  * Fonctionnalités :
  * - Détecteur de zombie.
  * - jouerTour lancer un tour.

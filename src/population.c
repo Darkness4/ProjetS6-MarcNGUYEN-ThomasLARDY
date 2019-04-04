@@ -91,6 +91,13 @@ struct Personne ***clonerGrillePopulation(
 
 /**
  * @brief Affiche la grille de population.
+ * 
+ * - IMMUNISE = '*'. Une étoile, parce qu'il est immortel.
+ * - VACCINE = '$'. Un dollar, parce qu'il a payé un vaccin
+ * - SAIN = '.'. Un ., un homme en parfaite santé
+ * - INCUBE = 'u'. Un o pas formé
+ * - MALADE = 'o'. Malade, une bulle qui va pas tarder à éclater
+ * - MORT = ' '. Vide
  *
  * Usage:
  * ```

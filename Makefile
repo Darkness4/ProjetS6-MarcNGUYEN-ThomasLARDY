@@ -29,7 +29,7 @@ rm = rm -rf
 
 executable: $(BINDIR)/$(TARGET)
 
-all: $(BINDIR)/$(TARGET) $(BINDIR)/population_test $(BINDIR)/statistique_test $(BINDIR)/jouer_un_tour_test
+all: $(BINDIR)/$(TARGET) tests
 
 tests: CFLAGS += -g
 tests: $(BINDIR)/population_test $(BINDIR)/statistique_test $(BINDIR)/jouer_un_tour_test
@@ -74,10 +74,17 @@ $(OBJECTS_TEST): $(OBJDIR)/%.o : $(TESTDIR)/%.c
 echoes:
 	@echo "OBJECTS :"
 	@echo "$(OBJECTS)"
+	@echo "OBJECTS :"
+	@echo "$(OBJECTS_TEST)"
 	@echo "INCLUDES :"
 	@echo "$(INCLUDES)"
+	@echo "INCLUDES :"
+	@echo "$(INCLUDES_TEST)"
 	@echo "SOURCES :"
 	@echo "$(SOURCES)"
+	@echo "SOURCES_TEST :"
+	@echo "$(SOURCES_TEST)"
+
 
 .PHONY: clean
 clean:
@@ -86,5 +93,5 @@ clean:
 
 .PHONY: remove
 remove: clean
-	@$(rm) $(BINDIR)/$(TARGET) $(BINDIR)/population_test $(BINDIR)/statistique_test $(BINDIR)/jouer_un_tour_test
+	@$(rm) -f $(BINDIR)
 	@echo "Executable removed!"
