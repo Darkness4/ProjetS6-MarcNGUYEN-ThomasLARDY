@@ -5,7 +5,7 @@
 Par Marc NGUYEN et Thomas LARDY.
 
 - [Algorithmique et Programmation II](#algorithmique-et-programmation-ii)
-  - [Projet : Propagation d'une épidémie dans un population avec un structure de graphe](#projet--propagation-dune-%C3%A9pid%C3%A9mie-dans-un-population-avec-un-structure-de-graphe)
+  - [Projet : Propagation d'une épidémie dans un population avec un structure de graphe](#projet--propagation-dune-épidémie-dans-un-population-avec-un-structure-de-graphe)
   - [Build](#build)
   - [Usage](#usage)
     - [Linux](#linux)
@@ -15,13 +15,13 @@ Par Marc NGUYEN et Thomas LARDY.
       - [main.c](#mainc)
       - [population.*](#population)
       - [statistique.*](#statistique)
-      - [jouer_un_tour.*](#joueruntour)
+      - [jouer_un_tour.*](#jouer_un_tour)
     - [tests/](#tests)
-      - [jouer_un_tour_test.c](#joueruntourtestc)
-      - [population_test.c](#populationtestc)
-      - [statistique_test.c](#statistiquetestc)
+      - [jouer_un_tour_test.c](#jouer_un_tour_testc)
+      - [population_test.c](#population_testc)
+      - [statistique_test.c](#statistique_testc)
     - [docs/](#docs)
-    - [Racine ./](#racine)
+    - [Racine ./](#racine-)
 
 ## Build
 
