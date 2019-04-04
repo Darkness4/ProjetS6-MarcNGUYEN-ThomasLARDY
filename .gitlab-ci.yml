@@ -1,17 +1,14 @@
-image: ubuntu:latest
-
+image: alpine:latest
 stages:
   - pages
   - build
   - test
 
-before_script:
-  - apt update
-
 pages:
+  image: alpine:latest
   stage: pages
   script: 
-  - apt install -y doxygen graphviz
+  - apk add doxygen graphviz
   - doxygen Doxyfile
   - mv webdoc/html/ public/
   artifacts:
@@ -21,9 +18,10 @@ pages:
   - master
 
 build-linux:
+  image: alpine:latest
   stage: build
   script: 
-  - apt install -y make gcc
+  - apk add build-base
   - make -j4
   - cp bin/* ./ProjetS6-MarcNGUYEN-ThomasLARDY
   artifacts:
@@ -34,8 +32,10 @@ build-linux:
   - master
 
 build-windows:
+  image: ubuntu:latest
   stage: build
   script: 
+  - apt update
   - apt install -y make gcc-mingw-w64-x86-64*
   - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=ProjetS6-MarcNGUYEN-ThomasLARDY.exe
   - cp bin/* ./ProjetS6-MarcNGUYEN-ThomasLARDY.exe
@@ -47,37 +47,44 @@ build-windows:
   - master
 
 test-docs:
+  image: alpine:latest
   stage: test
   script:
-  - apt install -y doxygen graphviz
+  - apk add doxygen graphviz
   - doxygen Doxyfile
 
 test-build-linux:
+  image: alpine:latest
   stage: build
   script:
-  - apt install -y make gcc
+  - apk add build-base
   - make -j4
   except:
   - master
 
 test-build-windows:
+  image: ubuntu:latest
   stage: build
   script:
+  - apt update
   - apt install -y make gcc-mingw-w64-x86-64
   - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=ProjetS6-MarcNGUYEN-ThomasLARDY.exe
   except:
   - master
 
 unit-tests-linux:
+  image: alpine:latest
   stage: test
   script:
-  - apt install -y make gcc
+  - apk add build-base
   - make tests -j4
   - for file in bin/*; do $file; done
 
 unit-tests-windows:
+  image: ubuntu:latest
   stage: test
   script:
+  - apt update
   - apt install -y make gcc-mingw-w64-x86-64
   - make all -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc  # TODO: run on linux, windows bin
 
