@@ -25,7 +25,7 @@ build-linux:
   script: 
   - apt install -y make gcc
   - make -j4
-  - cp bin/ProjetS6-MarcNGUYEN-ThomasLARDY ./ProjetS6-MarcNGUYEN-ThomasLARDY
+  - cp bin/* ./ProjetS6-MarcNGUYEN-ThomasLARDY
   artifacts:
     paths:
       - ProjetS6-MarcNGUYEN-ThomasLARDY
@@ -38,7 +38,7 @@ build-windows:
   script: 
   - apt install -y make gcc-mingw-w64-x86-64*
   - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=ProjetS6-MarcNGUYEN-ThomasLARDY.exe
-  - cp bin/ProjetS6-MarcNGUYEN-ThomasLARDY.exe ./ProjetS6-MarcNGUYEN-ThomasLARDY.exe
+  - cp bin/* ./ProjetS6-MarcNGUYEN-ThomasLARDY.exe
   artifacts:
     paths:
       - ProjetS6-MarcNGUYEN-ThomasLARDY.exe

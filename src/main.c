@@ -147,7 +147,7 @@ int main(int argc, char const* argv[]) {
  *
  */
 void printHelp(void) {
-  char* help =
+  printf(
       "Projet Semestre 6, Propagation d’une épidémie dans une population par Marc NGUYEN et Thomas LARDY en Mar-Apr 2019\n\
 \n\
 Usage: ProjetS6-MarcNGUYEN-ThomasLARDY [options]\n\n\
@@ -177,7 +177,6 @@ Extension Vaccin et Quarantaine:\n\
   -v,  --vaccin           [0, 1] proba de développer un vaccin   [défaut: 0.001]\n\
 \n\
 Autres:\n\
-  -h,  --help             Affiche ce dialogue\n";
-  printf(help);
+  -h,  --help             Affiche ce dialogue\n");
   exit(0);
 }
