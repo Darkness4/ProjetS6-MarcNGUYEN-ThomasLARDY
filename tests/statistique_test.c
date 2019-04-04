@@ -33,6 +33,8 @@ int main(void) {
   struct Population *population = creerPopulation(7);
   struct Statistique stats = getStatistique(population);
   appendData(data, stats);
+  assert(data->tours == 1);
+  printf("    data->tours == 1: \x1B[32mOK\x1B[0m\n");
   assert(data->liste_statistiques[0] != NULL);
   printf("    Data liste_statistiques[0] defined: \x1B[32mOK\x1B[0m\n");
   assert(data->liste_statistiques[0]->nb_MALADE == 0);
@@ -40,15 +42,14 @@ int main(void) {
   assert(data->liste_statistiques[0]->nb_SAIN == 49);
   printf("    Data liste_statistiques[0]->nb_SAIN == 49: \x1B[32mOK\x1B[0m\n");
 
-  printf("  getTaillePopulation:\n");
   data->population_totale = getTaillePopulation(population);
-  assert(data->population_totale == 49);
-  printf("    population_totale == 49:\n");
 
   printf("  appendData 2 (MALADE+1, SAIN-1):\n");
   stats.nb_MALADE++;
   stats.nb_SAIN--;
   appendData(data, stats);
+  assert(data->tours == 2);
+  printf("    data->tours == 2: \x1B[32mOK\x1B[0m\n");
   assert(data->liste_statistiques[1] != NULL);
   printf("    Data liste_statistiques[1] defined: \x1B[32mOK\x1B[0m\n");
   assert(data->liste_statistiques[0] != data->liste_statistiques[1]);
@@ -80,7 +81,7 @@ int main(void) {
   exporter(data, "data_test.txt");
   printf("    Exporter Data: \x1B[32mOK\x1B[0m\n");
   exporter(data_derivee, "data_derivee_test.txt");
-  printf("    Exporter Data': \x1B[32mOK\x1B[0m\n");
+  printf("    Exporter Data dérivée: \x1B[32mOK\x1B[0m\n");
   lire_et_comparer(data, "data_test.txt");
   lire_et_comparer(data_derivee, "data_derivee_test.txt");
   appendData(data, stats);

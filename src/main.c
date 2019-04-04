@@ -43,34 +43,31 @@ void printHelp(void);
 int main(int argc, char const* argv[]) {
   // Defauts
   srand(time(NULL));
-  unsigned long cote = 10;
   unsigned long hauteur = 20;
   unsigned long limite = 80;
   unsigned duree_incube = 4;
   double beta = 0.5;                        // MALADE -> MORT
   double gamma = 0.1;                       // MALADE -> IMMUNISE
   double lambda = 1.0;                      // SAIN -> MALADE
-  double chance_quarantaine = 0.1;          // duree_quarantaine
+  double chance_quarantaine = 0.1;
   double chance_decouverte_vaccin = 0.001;  // MALADE -> VACINE par découverte
   char* file_graph = "graphique.txt";
   char* file_data = "data.txt";
   char* file_tableau = "tableau de bord.txt";
   unsigned long tour_max = 100;
   int duree_quarantaine = 20;  // Très grand au tps d'incub
-  int cordon_sanitaire = 10;   // Généralement égal au temps d'incubation
+  int cordon_sanitaire = 5;   // Généralement égal au temps d'incubation
 
   // Arguments positionnés
   long x, y;
-  sscanf(argv[1], "%lu", &x);
-  sscanf(argv[2], "%lu", &y);
+  unsigned long cote;
+  if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")) printHelp();
+  sscanf(argv[1], "%li", &x);
+  sscanf(argv[2], "%li", &y);
+  sscanf(argv[3], "%lu", &cote);
 
   // Arguments nommés (incrémenter i_défaut si arguments positionné)
-  for (int i = 3; i < argc; i++) {
-    if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) printHelp();
-
-    if (!strcmp(argv[i], "-c") || !strcmp(argv[i], "--cote"))
-      sscanf(argv[i + 1], "%lu", &cote);
-
+  for (int i = 4; i < argc; i++) {
     if (!strcmp(argv[i], "-b") || !strcmp(argv[i], "--mort"))
       sscanf(argv[i + 1], "%lf", &beta);
 
@@ -123,8 +120,8 @@ int main(int argc, char const* argv[]) {
   appendData(data, stats);
 
   // Traitement
-  afficherGrillePopulation(population);
   patient_zero(population, x, y);
+  afficherGrillePopulation(population);
   for (unsigned long i = 0; i < tour_max && zombiePresent(population); i++) {
     jouerTour(population, beta, gamma, lambda, chance_quarantaine,
               chance_decouverte_vaccin, duree_incube, cordon_sanitaire,
@@ -150,9 +147,8 @@ void printHelp(void) {
   printf(
       "Projet Semestre 6, Propagation d’une épidémie dans une population par Marc NGUYEN et Thomas LARDY en Mar-Apr 2019\n\
 \n\
-Usage: ProjetS6-MarcNGUYEN-ThomasLARDY [options]\n\n\
+Usage: ProjetS6-MarcNGUYEN-ThomasLARDY <x> <y> <cote> [options...]\n\n\
 Population Options:\n\
-  -c,  --cote             côte de la grille de personnes            [défaut: 10]\n\
   -t,  --tours            tours max de la simulation               [défaut: 500]\n\
 \n\
 Simulation Options Générales:\n\
@@ -172,7 +168,7 @@ Extension Incubation:\n\
 \n\
 Extension Vaccin et Quarantaine:\n\
   -q,  --quarantaine      [0, 1] proba d'une quarantaine           [défaut: 0.1]\n\
-  -dq, --duree-quarantaine  durée d'une quarantaine                 [défaut: 10]\n\
+  -dq, --duree-quarantaine  durée d'une quarantaine                 [défaut: 20]\n\
        --cordon           taille du cordon sanitaire                 [défaut: 5]\n\
   -v,  --vaccin           [0, 1] proba de développer un vaccin   [défaut: 0.001]\n\
 \n\
