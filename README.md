@@ -12,16 +12,16 @@ Par Marc NGUYEN et Thomas LARDY.
     - [Output](#output)
   - [Structure du programme](#structure-du-programme)
     - [src/](#src)
-      - [main](#main)
-      - [population](#population)
-      - [statistique](#statistique)
-      - [jouer_un_tour](#joueruntour)
-    - [tests](#tests)
-      - [jouer_un_tour_test](#joueruntourtest)
-      - [population_test](#populationtest)
-      - [statistique_test](#statistiquetest)
-    - [docs](#docs)
-    - [Racine](#racine)
+      - [main.c](#mainc)
+      - [population.*](#population)
+      - [statistique.*](#statistique)
+      - [jouer_un_tour.*](#joueruntour)
+    - [tests/](#tests)
+      - [jouer_un_tour_test.c](#joueruntourtestc)
+      - [population_test.c](#populationtestc)
+      - [statistique_test.c](#statistiquetestc)
+    - [docs/](#docs)
+    - [Racine ./](#racine)
 
 ## Build
 
@@ -198,11 +198,11 @@ Des couleurs sont également associés (Terminal seulement):
 
 Code Source.
 
-#### main
+#### main.c
 
 Fichier principal.
 
-#### population
+#### population.*
 
 Manipulateur de population.
 
@@ -214,7 +214,7 @@ Fonctionnalités :
 - Faire le patient zero
 - Obtenir la taille de la population
 
-#### statistique
+#### statistique.*
 
 Gère le stockage de donnée et la récupération de métrique.
 
@@ -228,7 +228,7 @@ Contient:
 - Exporter et afficher un graphique
 - Exporter et afficher un tableau de bord
 
-#### jouer_un_tour
+#### jouer_un_tour.*
 
 Lancer un tour.
 
@@ -238,11 +238,11 @@ Fonctionnalités :
 - jouerTour lancer un tour.
 - Mettre en quarantaine
 
-### tests
+### tests/
 
 Tests unitaires.
 
-#### jouer_un_tour_test
+#### jouer_un_tour_test.c
 
 - zombiePresent :
   - Faux s'il n'y a pas de MALADE/INCUBE
@@ -250,7 +250,7 @@ Tests unitaires.
 - mettreEnQuarantaine :
   - Le rayon de la quarantaine correspond aux paramètres
 
-#### population_test
+#### population_test.c
 
 - creerPopulation:
   - La population créée a la même cote que le paramètre.
@@ -266,7 +266,7 @@ Tests unitaires.
 - getTaillePopulation:
   - La taille obtenue correspond à la taille de la population.
 
-#### statistique_test
+#### statistique_test.c
 
 - creerData:
   - tours = 0.
@@ -293,13 +293,13 @@ Tests unitaires.
   - (Manuel) graphique avec hauteur = population et limite = tours/2
   - (Manuel) graphique avec hauteur = population et limite = 90
 
-### docs
+### docs/
 
 Dossier avec la consigne en PDF.
 
 [Documentation Doxygen](http://marc.nguyen.gitlab.emse.fr/projets6-marcnguyen-thomaslardy/)
 
-### Racine
+### Racine ./
 
 - .gitignore : Ignorer ces fichiers pour les futurs commits.
 - .gitlab-ci.yml : Intégration Continue sur Gitlab, contient cross-compilation, tests et déploiment de la documentation Doxygen.
