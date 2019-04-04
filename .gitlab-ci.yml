@@ -21,7 +21,7 @@ build-linux:
   image: alpine:latest
   stage: build
   script: 
-  - apk add make gcc
+  - apk add build-base
   - make -j4
   - cp bin/* ./ProjetS6-MarcNGUYEN-ThomasLARDY
   artifacts:
@@ -57,7 +57,7 @@ test-build-linux:
   image: alpine:latest
   stage: build
   script:
-  - apk add make gcc
+  - apk add build-base
   - make -j4
   except:
   - master
@@ -76,7 +76,7 @@ unit-tests-linux:
   image: alpine:latest
   stage: test
   script:
-  - apk add make gcc
+  - apk add build-base
   - make tests -j4
   - for file in bin/*; do $file; done
 
