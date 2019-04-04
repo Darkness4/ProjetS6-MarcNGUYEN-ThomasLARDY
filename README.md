@@ -196,7 +196,7 @@ Des couleurs sont également associés (Terminal seulement):
 
 ### src/
 
-Code Source.
+*Code Source.*
 
 #### main.c
 
@@ -240,7 +240,7 @@ Fonctionnalités :
 
 ### tests/
 
-Tests unitaires.
+*Tests unitaires.*
 
 #### jouer_un_tour_test.c
 
