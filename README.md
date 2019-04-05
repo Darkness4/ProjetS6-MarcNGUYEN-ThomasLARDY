@@ -187,9 +187,9 @@ Le graphique représente le ratio d'un état par rapport aux tours.
 
 Des couleurs sont également associés (Terminal seulement):
 
-- JAUNE : Ne peut mourir
-- ROUGE : Peut mourir
-- VIOLET : Peut contaminer
+- JAUNE : Immusé
+- ROUGE : Malade
+- VIOLET : Incubé
 - VERT : Quarantaine
 
 ## Structure du programme
