@@ -8,7 +8,7 @@ pages:
   image: alpine:latest
   stage: pages
   script: 
-  - apk add doxygen graphviz
+  - apk add doxygen graphviz ghostscript-fonts
   - doxygen Doxyfile
   - mv webdoc/html/ public/
   artifacts:
@@ -50,7 +50,7 @@ test-docs:
   image: alpine:latest
   stage: test
   script:
-  - apk add doxygen graphviz
+  - apk add doxygen graphviz ghostscript-fonts
   - doxygen Doxyfile
 
 test-build-linux:
