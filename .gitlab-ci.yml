@@ -39,20 +39,20 @@ build-linux:
   - tags
   - gitlab-ci-test
 
-build-windows:
-  image: ubuntu:latest
-  stage: build
-  script: 
-  - apt update
-  - apt install -y make gcc-mingw-w64-x86-64*
-  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=$TARGET.exe
-  artifacts:
-    paths:
-      - bin/$TARGET.exe
-    expire_in: 1 week
-  only:
-  - master
-  - gitlab-ci-test
+# build-windows:
+#   image: ubuntu:latest
+#   stage: build
+#   script: 
+#   - apt update
+#   - apt install -y make gcc-mingw-w64-x86-64*
+#   - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=$TARGET.exe
+#   artifacts:
+#     paths:
+#       - bin/$TARGET.exe
+#     expire_in: 1 week
+#   only:
+#   - master
+#   - gitlab-ci-test
 
 test-docs:
   image: alpine:latest
@@ -72,17 +72,17 @@ test-build-linux:
   - tags
   - gitlab-ci-test
 
-test-build-windows:
-  image: ubuntu:latest
-  stage: build
-  script:
-  - apt update
-  - apt install -y make gcc-mingw-w64-x86-64
-  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=$TARGET.exe
-  except:
-  - master
-  - tags
-  - gitlab-ci-test
+# test-build-windows:
+#   image: ubuntu:latest
+#   stage: build
+#   script:
+#   - apt update
+#   - apt install -y make gcc-mingw-w64-x86-64
+#   - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=$TARGET.exe
+#   except:
+#   - master
+#   - tags
+#   - gitlab-ci-test
 
 unit-tests-linux:
   image: alpine:latest
@@ -92,30 +92,48 @@ unit-tests-linux:
   - make tests -j4
   - for file in bin/*; do $file; done
 
-unit-tests-windows:
-  image: ubuntu:latest
-  stage: test
-  script:
-  - apt update
-  - apt install -y make gcc-mingw-w64-x86-64
-  - make all -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc  # TODO: run on linux, windows bin
+# unit-tests-windows:
+#   image: ubuntu:latest
+#   stage: test
+#   script:
+#   - apt update
+#   - apt install -y make gcc-mingw-w64-x86-64
+#   - make all -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc  # TODO: run on linux, windows bin
 
 production:
   type: deploy
-  image: alpine:latest
   dependencies:
-    - build-windows
+    # - build-windows
     - build-linux
     - pages
     - unit-tests-linux
-    - unit-tests-windows
+    # - unit-tests-windows
   script:
     - echo "0"
   artifacts:
-    name: "$TARGET-$CI_COMMIT_REF_NAME"
+    name: "$TARGET"
     paths:
       - ./
     expire_in: 1 year
   only:
   - tags
+  - gitlab-ci-test
+
+production-master:
+  type: deploy
+  dependencies:
+    # - build-windows
+    - build-linux
+    - pages
+    - unit-tests-linux
+    # - unit-tests-windows
+  script:
+    - echo "0"
+  artifacts:
+    name: "$TARGET-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - ./
+    expire_in: 1 year
+  only:
+  - master
   - gitlab-ci-test
