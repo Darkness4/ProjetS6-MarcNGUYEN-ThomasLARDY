@@ -21,6 +21,7 @@ pages:
     - public
   only:
   - master
+  - tags
   - gitlab-ci-test
 
 build-linux:
@@ -35,6 +36,7 @@ build-linux:
     expire_in: 1 week
   only:
   - master
+  - tags
   - gitlab-ci-test
 
 build-windows:
@@ -67,6 +69,7 @@ test-build-linux:
   - make -j4
   except:
   - master
+  - tags
   - gitlab-ci-test
 
 test-build-windows:
@@ -78,6 +81,7 @@ test-build-windows:
   - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=$TARGET.exe
   except:
   - master
+  - tags
   - gitlab-ci-test
 
 unit-tests-linux:
@@ -106,11 +110,11 @@ production:
     - unit-tests-linux
     - unit-tests-windows
   script:
-    - apk add zip
-    - zip -r $TARGET-$CI_COMMIT_SHORT_SHA.zip *
+    - echo "0"
   artifacts:
+    name: "$TARGET-$CI_COMMIT_REF_NAME"
     paths:
-      - $TARGET-$CI_COMMIT_SHORT_SHA.zip
+      - ./
     expire_in: 1 year
   only:
   - tags
