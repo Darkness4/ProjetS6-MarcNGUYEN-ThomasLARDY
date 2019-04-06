@@ -341,11 +341,14 @@ void tableau(struct Data *data, const char *fichier_tableau) {
   long vit_MALADE_max = 0;
   long vit_IMMUNISE_max = 0;
   long vit_MORT_max = 0;
+  long vit_INCUBE_max = 0;
   for (unsigned long i = 0; i < data_derivee->tours; i++) {
     if (vit_IMMUNISE_max < data_derivee->liste_statistiques[i]->nb_IMMUNISE)
       vit_IMMUNISE_max = data_derivee->liste_statistiques[i]->nb_IMMUNISE;
     if (vit_MORT_max < data_derivee->liste_statistiques[i]->nb_MORT)
       vit_MORT_max = data_derivee->liste_statistiques[i]->nb_MORT;
+    if (vit_INCUBE_max < data_derivee->liste_statistiques[i]->nb_INCUBE)
+      vit_INCUBE_max = data_derivee->liste_statistiques[i]->nb_INCUBE;
     if (vit_MALADE_max < data_derivee->liste_statistiques[i]->nb_MALADE)
       vit_MALADE_max = data_derivee->liste_statistiques[i]->nb_MALADE;
   }
@@ -373,10 +376,10 @@ void tableau(struct Data *data, const char *fichier_tableau) {
           data->population_totale);
   printf(
       "|---------------------------------------------------------------|\n"
-      "| Vitesse IMMUNISE max | Vitesse MALADE max | Vitesse MORT max  |\n"
-      "| -------------------- | ------------------ | ----------------- |\n"
-      "| %20li | %18li | %17li |\n",
-      vit_IMMUNISE_max, vit_MALADE_max, vit_MORT_max);
+      "| Vit. IMMU max | Vit. INCUB max | Vit. MAL max | Vit. MORT max |\n"
+      "| ------------- | -------------- | ------------ | ------------- |\n"
+      "| %13li | %14li | %12li | %13li |\n",
+      vit_IMMUNISE_max, vit_INCUBE_max, vit_MALADE_max, vit_MORT_max);
   printf("-----------------------------------------------------------------\n");
 
   FILE *file = fopen(fichier_tableau, "w");
@@ -403,10 +406,10 @@ void tableau(struct Data *data, const char *fichier_tableau) {
               data->population_totale);
   fprintf(file,
           "|---------------------------------------------------------------|\n"
-          "| Vitesse IMMUNISE max | Vitesse MALADE max | Vitesse MORT max  |\n"
-          "| -------------------- | ------------------ | ----------------- |\n"
-          "| %20li | %18li | %17li |\n",
-          vit_IMMUNISE_max, vit_MALADE_max, vit_MORT_max);
+          "| Vit. IMMU max | Vit. INCUB max | Vit. MAL max | Vit. MORT max |\n"
+          "| ------------- | -------------- | ------------ | ------------- |\n"
+          "| %13li | %14li | %12li | %13li |\n",
+          vit_IMMUNISE_max, vit_INCUBE_max, vit_MALADE_max, vit_MORT_max);
   fprintf(
       file,
       "-----------------------------------------------------------------\n");
