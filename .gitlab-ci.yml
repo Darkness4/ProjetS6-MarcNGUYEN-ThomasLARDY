@@ -1,8 +1,9 @@
 image: alpine:latest
 stages:
-  - pages
-  - build
   - test
+  - build
+  - pages
+  - deploy
 
 pages:
   image: alpine:latest
@@ -16,6 +17,7 @@ pages:
     - public
   only:
   - master
+  - gitlab-ci-test
 
 build-linux:
   image: alpine:latest
@@ -30,6 +32,7 @@ build-linux:
     expire_in: 1 week
   only:
   - master
+  - gitlab-ci-test
 
 build-windows:
   image: ubuntu:latest
@@ -45,6 +48,7 @@ build-windows:
     expire_in: 1 week
   only:
   - master
+  - gitlab-ci-test
 
 test-docs:
   image: alpine:latest
@@ -61,6 +65,7 @@ test-build-linux:
   - make -j4
   except:
   - master
+  - gitlab-ci-test
 
 test-build-windows:
   image: ubuntu:latest
@@ -71,6 +76,7 @@ test-build-windows:
   - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=ProjetS6-MarcNGUYEN-ThomasLARDY.exe
   except:
   - master
+  - gitlab-ci-test
 
 unit-tests-linux:
   image: alpine:latest
@@ -88,3 +94,20 @@ unit-tests-windows:
   - apt install -y make gcc-mingw-w64-x86-64
   - make all -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc  # TODO: run on linux, windows bin
 
+production:
+  type: deploy
+  dependencies:
+    - build-windows
+    - build-linux
+    - pages
+    - unit-tests-linux
+    - unit-tests-windows
+  script:
+    - echo "0"
+  artifacts:
+    paths:
+      - ./
+    expire_in: 1 year
+  only:
+  - tags
+  - gitlab-ci-test
