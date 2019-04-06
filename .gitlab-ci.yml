@@ -1,4 +1,8 @@
 image: alpine:latest
+
+variables:
+  TARGET: "ProjetS6-MarcNGUYEN-ThomasLARDY"
+
 stages:
   - test
   - build
@@ -25,10 +29,9 @@ build-linux:
   script: 
   - apk add build-base
   - make -j4
-  - cp bin/* ./ProjetS6-MarcNGUYEN-ThomasLARDY
   artifacts:
     paths:
-      - ProjetS6-MarcNGUYEN-ThomasLARDY
+      - bin/$TARGET
     expire_in: 1 week
   only:
   - master
@@ -40,11 +43,10 @@ build-windows:
   script: 
   - apt update
   - apt install -y make gcc-mingw-w64-x86-64*
-  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=ProjetS6-MarcNGUYEN-ThomasLARDY.exe
-  - cp bin/* ./ProjetS6-MarcNGUYEN-ThomasLARDY.exe
+  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=$TARGET.exe
   artifacts:
     paths:
-      - ProjetS6-MarcNGUYEN-ThomasLARDY.exe
+      - bin/$TARGET.exe
     expire_in: 1 week
   only:
   - master
@@ -73,7 +75,7 @@ test-build-windows:
   script:
   - apt update
   - apt install -y make gcc-mingw-w64-x86-64
-  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=ProjetS6-MarcNGUYEN-ThomasLARDY.exe
+  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=$TARGET.exe
   except:
   - master
   - gitlab-ci-test
@@ -96,6 +98,7 @@ unit-tests-windows:
 
 production:
   type: deploy
+  image: alpine:latest
   dependencies:
     - build-windows
     - build-linux
@@ -103,10 +106,11 @@ production:
     - unit-tests-linux
     - unit-tests-windows
   script:
-    - echo "0"
+    - apk add zip
+    - zip $TARGET-$CI_COMMIT_SHORT_SHA.zip *
   artifacts:
     paths:
-      - ./
+      - $TARGET.zip
     expire_in: 1 year
   only:
   - tags
