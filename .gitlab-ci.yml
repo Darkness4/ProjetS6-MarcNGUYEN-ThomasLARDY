@@ -107,7 +107,7 @@ production:
     - unit-tests-windows
   script:
     - apk add zip
-    - zip $TARGET-$CI_COMMIT_SHORT_SHA.zip *
+    - zip -r $TARGET-$CI_COMMIT_SHORT_SHA.zip *
   artifacts:
     paths:
       - $TARGET-$CI_COMMIT_SHORT_SHA.zip
