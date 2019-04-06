@@ -1,8 +1,13 @@
 image: alpine:latest
+
+variables:
+  TARGET: "ProjetS6-MarcNGUYEN-ThomasLARDY"
+
 stages:
-  - pages
-  - build
   - test
+  - build
+  - pages
+  - deploy
 
 pages:
   image: alpine:latest
@@ -16,6 +21,8 @@ pages:
     - public
   only:
   - master
+  - tags
+  - gitlab-ci-test
 
 build-linux:
   image: alpine:latest
@@ -23,13 +30,14 @@ build-linux:
   script: 
   - apk add build-base
   - make -j4
-  - cp bin/* ./ProjetS6-MarcNGUYEN-ThomasLARDY
   artifacts:
     paths:
-      - ProjetS6-MarcNGUYEN-ThomasLARDY
+      - bin/$TARGET
     expire_in: 1 week
   only:
   - master
+  - tags
+  - gitlab-ci-test
 
 build-windows:
   image: ubuntu:latest
@@ -37,14 +45,14 @@ build-windows:
   script: 
   - apt update
   - apt install -y make gcc-mingw-w64-x86-64*
-  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=ProjetS6-MarcNGUYEN-ThomasLARDY.exe
-  - cp bin/* ./ProjetS6-MarcNGUYEN-ThomasLARDY.exe
+  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=$TARGET.exe
   artifacts:
     paths:
-      - ProjetS6-MarcNGUYEN-ThomasLARDY.exe
+      - bin/$TARGET.exe
     expire_in: 1 week
   only:
   - master
+  - gitlab-ci-test
 
 test-docs:
   image: alpine:latest
@@ -61,6 +69,8 @@ test-build-linux:
   - make -j4
   except:
   - master
+  - tags
+  - gitlab-ci-test
 
 test-build-windows:
   image: ubuntu:latest
@@ -68,9 +78,11 @@ test-build-windows:
   script:
   - apt update
   - apt install -y make gcc-mingw-w64-x86-64
-  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=ProjetS6-MarcNGUYEN-ThomasLARDY.exe
+  - make -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc TARGET=$TARGET.exe
   except:
   - master
+  - tags
+  - gitlab-ci-test
 
 unit-tests-linux:
   image: alpine:latest
@@ -88,3 +100,22 @@ unit-tests-windows:
   - apt install -y make gcc-mingw-w64-x86-64
   - make all -j4 CC=/usr/bin/x86_64-w64-mingw32-gcc  # TODO: run on linux, windows bin
 
+production:
+  type: deploy
+  image: alpine:latest
+  dependencies:
+    - build-windows
+    - build-linux
+    - pages
+    - unit-tests-linux
+    - unit-tests-windows
+  script:
+    - echo "0"
+  artifacts:
+    name: "$TARGET-$CI_COMMIT_REF_NAME"
+    paths:
+      - ./
+    expire_in: 1 year
+  only:
+  - tags
+  - gitlab-ci-test
