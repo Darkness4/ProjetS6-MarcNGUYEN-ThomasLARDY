@@ -46,22 +46,31 @@ int main(int argc, char const* argv[]) {
   unsigned long hauteur = 20;
   unsigned long limite = 80;
   unsigned duree_incube = 4;
-  double beta = 0.5;                        // MALADE -> MORT
-  double gamma = 0.1;                       // MALADE -> IMMUNISE
-  double lambda = 1.0;                      // SAIN -> INCUBE
+  double beta = 0.5;    // MALADE -> MORT
+  double gamma = 0.1;   // MALADE -> IMMUNISE
+  double lambda = 1.0;  // SAIN -> INCUBE
   double chance_quarantaine = 0.1;
-  double chance_decouverte_vaccin = 0.001;  // SAIN/IMMUNISE -> VACINE par découverte
+  double chance_decouverte_vaccin =
+      0.001;  // SAIN/IMMUNISE -> VACINE par découverte
   char* file_graph = "graphique.txt";
   char* file_data = "data.txt";
   char* file_tableau = "tableau de bord.txt";
   unsigned long tour_max = 100;
   int duree_quarantaine = 20;  // Très grand au tps d'incub
-  int cordon_sanitaire = 5;   // Généralement égal au temps d'incubation
+  int cordon_sanitaire = 5;    // Généralement égal au temps d'incubation
 
   // Arguments positionnés
   long x, y;
   unsigned long cote;
+  if (argc < 2) {
+    printf("ERREUR : Pas assez d'arguments.\n\n");
+    printHelp();
+  }
   if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")) printHelp();
+  if (argc < 4) {
+    printf("ERREUR : Pas assez d'arguments.\n\n");
+    printHelp();
+  }
   sscanf(argv[1], "%li", &x);
   sscanf(argv[2], "%li", &y);
   sscanf(argv[3], "%lu", &cote);
@@ -74,7 +83,8 @@ int main(int argc, char const* argv[]) {
     if (!strcmp(argv[i], "-g") || !strcmp(argv[i], "--immunise"))
       sscanf(argv[i + 1], "%lf", &gamma);
 
-    if (!strcmp(argv[i], "-la") || !strcmp(argv[i], "--malade"))
+    if (!strcmp(argv[i], "-la") || !strcmp(argv[i], "--malade") ||
+        !strcmp(argv[i], "--incube"))
       sscanf(argv[i + 1], "%lf", &lambda);
 
     if (!strcmp(argv[i], "-ha") || !strcmp(argv[i], "--hauteur"))
@@ -154,7 +164,7 @@ Population Options:\n\
 Simulation Options Générales:\n\
   -b,  --mort             [0, 1] proba de mourir par la maladie    [défaut: 0.5]\n\
   -g,  --immunise         [0, 1] proba d'être immunise             [défaut: 0.1]\n\
-  -la, --malade           [0, 1] proba de contamination            [défaut: 1.0]\n\
+  -la, --malade --incube  [0, 1] proba de contamination            [défaut: 1.0]\n\
 \n\
 Output Options:\n\
   -od, --data             nom de données brutes               [défaut: data.txt]\n\
