@@ -48,9 +48,9 @@ int main(int argc, char const* argv[]) {
   unsigned duree_incube = 4;
   double beta = 0.5;                        // MALADE -> MORT
   double gamma = 0.1;                       // MALADE -> IMMUNISE
-  double lambda = 1.0;                      // SAIN -> MALADE
+  double lambda = 1.0;                      // SAIN -> INCUBE
   double chance_quarantaine = 0.1;
-  double chance_decouverte_vaccin = 0.001;  // MALADE -> VACINE par découverte
+  double chance_decouverte_vaccin = 0.001;  // SAIN/IMMUNISE -> VACINE par découverte
   char* file_graph = "graphique.txt";
   char* file_data = "data.txt";
   char* file_tableau = "tableau de bord.txt";
