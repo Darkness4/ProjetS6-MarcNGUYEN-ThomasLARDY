@@ -6,6 +6,7 @@ Par Marc NGUYEN et Thomas LARDY.
 
 - [Algorithmique et Programmation II](#algorithmique-et-programmation-ii)
   - [Projet : Propagation d'une épidémie dans un population avec un structure de graphe](#projet--propagation-dune-épidémie-dans-un-population-avec-un-structure-de-graphe)
+  - [Fonctionnalités](#fonctionnalités)
   - [Build](#build)
   - [Usage](#usage)
     - [Linux](#linux)
@@ -22,6 +23,14 @@ Par Marc NGUYEN et Thomas LARDY.
       - [statistique_test.c](#statistique_testc)
     - [docs/](#docs)
     - [Racine ./](#racine-)
+
+## Fonctionnalités
+
+- Simulateur de propagation d'une épidémie
+- Période d'incubation
+- Vaccination
+- Quarantaine
+- Graphique et tableau de bord
 
 ## Build
 
@@ -162,14 +171,14 @@ o.........
 ..uuuu
 .
 -----------------------------------------------------------------
-| Tours |   SAIN   |   MORT   |   IMMU   |   VACC   |   Total   |
-| ----- | -------- | -------- | -------- | -------- | --------- |
-|    16 |        0 |       14 |        1 |       85 |       100 |
-|       |   0.00 % |  14.00 % |   1.00 % |  85.00 % |     100 % |
-|---------------------------------------------------------------|
-| Vitesse IMMUNISE max | Vitesse MALADE max | Vitesse MORT max  |
-| -------------------- | ------------------ | ----------------- |
-|                    1 |                  2 |                 2 |
+| Tours                                                           | SAIN               | MORT              | IMMU   | VACC    | Total |
+| --------------------------------------------------------------- | ------------------ | ----------------- | ------ | ------- | ----- |
+| 16                                                              | 0                  | 14                | 1      | 85      | 100   |
+|                                                                 | 0.00 %             | 14.00 %           | 1.00 % | 85.00 % | 100 % |
+| --------------------------------------------------------------- |
+| Vitesse IMMUNISE max                                            | Vitesse MALADE max | Vitesse MORT max  |
+| --------------------                                            | ------------------ | ----------------- |
+| 1                                                               | 2                  | 2                 |
 -----------------------------------------------------------------
 
 ```
