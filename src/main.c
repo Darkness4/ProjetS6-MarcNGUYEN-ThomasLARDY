@@ -159,7 +159,7 @@ void printHelp(void) {
 \n\
 Usage: ProjetS6-MarcNGUYEN-ThomasLARDY <x> <y> <cote> [options...]\n\n\
 Population Options:\n\
-  -t,  --tours            tours max de la simulation               [défaut: 500]\n\
+  -t,  --tours            tours max de la simulation               [défaut: 100]\n\
 \n\
 Simulation Options Générales:\n\
   -b,  --mort             [0, 1] proba de mourir par la maladie    [défaut: 0.5]\n\
@@ -174,7 +174,7 @@ Output Options:\n\
   -ha, --hauteur          hauteur du graphique ASCII                [défaut: 20]\n\
 \n\
 Extension Incubation:\n\
-  -di, --duree-incube     durée d'une incubation [défaut: 4]\n\
+  -di, --duree-incube     durée d'une incubation                     [défaut: 4]\n\
 \n\
 Extension Vaccin et Quarantaine:\n\
   -q,  --quarantaine      [0, 1] proba d'une quarantaine           [défaut: 0.1]\n\
