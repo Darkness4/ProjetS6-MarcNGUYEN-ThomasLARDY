@@ -234,12 +234,15 @@ char **graphique(struct Data *data, const char *fichier_data,
       graphique_terminal[i][j] = " ";
     }
   }
+  // if (data->tours > limite) {
+  //   printf("Le nombre de caractères\n");
+  //   return graphique;
+  // }
   unsigned long pop_tot = data->population_totale;
-  unsigned long ratio_tour = data->tours / limite;
-  if (ratio_tour == 0) ratio_tour = 1;
+  unsigned long ratio_tour = ((double)data->tours + limite - 1) / limite;
   struct Statistique **stats = data->liste_statistiques;
 
-  for (unsigned long tour = 0; tour < data->tours - ratio_tour + 1;
+  for (unsigned long tour = 0; tour < data->tours - ratio_tour;
        tour += ratio_tour) {
     unsigned long ratio_nb_IMMUNISE_norm = 0;
     unsigned long ratio_nb_MORT_norm = 0;
@@ -278,7 +281,7 @@ char **graphique(struct Data *data, const char *fichier_data,
       curseur++;
     }
     for (unsigned long i = 0; i < ratio_nb_IMMUNISE_norm; i++) {
-      graphique[curseur][tour / ratio_tour] = 'm';
+      graphique[curseur][tour / ratio_tour] = '*';
       graphique_terminal[curseur][tour / ratio_tour] = "\e[33m*\e[0m";
       curseur++;
     }

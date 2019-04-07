@@ -142,8 +142,12 @@ int main(int argc, char const* argv[]) {
   }
 
   // Output
+  printf("Graphique (colonne = tour, charactère = %%état)\n");
   graphique(data, file_graph, hauteur, limite);
+  printf("Exportation...");
   exporter(data, file_data);
+  printf("OK\n");
+  printf("Tableau de bord\n");
   tableau(data, file_tableau);
 
   return 0;
